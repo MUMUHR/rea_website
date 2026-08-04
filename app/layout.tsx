@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
-import { ThemeProvider } from "next-themes";
 import "./globals.css";
 
 const defaultUrl = process.env.VERCEL_URL
@@ -9,8 +8,44 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Next.js and Supabase Starter Kit",
-  description: "The fastest way to build apps with Next.js and Supabase",
+  title: "REACreative.idn — Bangun Website & Sistem Bisnis Digital",
+  description:
+    "Kami membantu Anda membangun website, e-commerce, sistem kasir, hingga aplikasi mobile yang siap jualan dan operasional. Tampilan menarik, loading cepat, dan fokus pada konversi.",
+  keywords: [
+    "jasa pembuatan website",
+    "website bisnis",
+    "e-commerce",
+    "aplikasi mobile",
+    "sistem kasir",
+    "digital agency indonesia",
+    "reacreative",
+  ],
+  authors: [{ name: "REACreative.idn" }],
+  creator: "REACreative.idn",
+  openGraph: {
+    type: "website",
+    locale: "id_ID",
+    url: defaultUrl,
+    title: "REACreative.idn — Bangun Website & Sistem Bisnis Digital",
+    description:
+      "Website, e-commerce, sistem kasir, hingga aplikasi mobile yang siap jualan.",
+    siteName: "REACreative.idn",
+    images: [
+      {
+        url: "/opengraph-image.png",
+        width: 1200,
+        height: 630,
+        alt: "REACreative.idn",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "REACreative.idn — Bangun Website & Sistem Bisnis Digital",
+    description:
+      "Website, e-commerce, sistem kasir, hingga aplikasi mobile yang siap jualan.",
+    images: ["/twitter-image.png"],
+  },
 };
 
 const geistSans = Geist({
@@ -25,17 +60,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.className} antialiased`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
-      </body>
+    <html lang="id" suppressHydrationWarning>
+      <body className={`${geistSans.className} antialiased`}>{children}</body>
     </html>
   );
 }

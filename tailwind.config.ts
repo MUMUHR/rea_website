@@ -11,6 +11,19 @@ export default {
   theme: {
     extend: {
       colors: {
+        /* ─── REACreative Brand Tokens ─── */
+        brand: {
+          DEFAULT: "#E11D2E",
+          hover:   "#C41526",
+        },
+        support: "#121115",
+        dayum: {
+          DEFAULT: "#232323",
+          hover:   "#2C2C2C",
+        },
+        "bg-alt": "#F5F5F5",
+
+        /* ─── shadcn/ui tokens (required) ─── */
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
@@ -53,9 +66,39 @@ export default {
         },
       },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        sm:   "var(--radius-sm)",
+        md:   "var(--radius-md)",
+        lg:   "var(--radius-lg)",
+        xl:   "var(--radius-xl)",
+        full: "var(--radius-full)",
+        DEFAULT: "var(--radius-md)",
+      },
+      fontFamily: {
+        sans: ["var(--font-geist-sans)", "system-ui", "sans-serif"],
+      },
+      fontSize: {
+        /* Modular scale 1.333 (perfect fourth) for headings */
+        "display-xl": ["clamp(2.5rem, 5vw, 4rem)",   { lineHeight: "1.1", letterSpacing: "-0.02em" }],
+        "display-lg": ["clamp(2rem, 4vw, 3rem)",     { lineHeight: "1.15", letterSpacing: "-0.015em" }],
+        "display-md": ["clamp(1.5rem, 3vw, 2.25rem)", { lineHeight: "1.2", letterSpacing: "-0.01em" }],
+        "display-sm": ["clamp(1.2rem, 2.5vw, 1.7rem)", { lineHeight: "1.3" }],
+      },
+      spacing: {
+        "section-y": "var(--space-section-y)",
+      },
+      animation: {
+        marquee: "marquee 30s linear infinite",
+      },
+      keyframes: {
+        marquee: {
+          from: { transform: "translateX(0)" },
+          to:   { transform: "translateX(-50%)" },
+        },
+      },
+      boxShadow: {
+        sm:    "var(--shadow-sm)",
+        md:    "var(--shadow-md)",
+        brand: "var(--shadow-brand)",
       },
     },
   },
