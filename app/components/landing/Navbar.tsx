@@ -7,21 +7,22 @@ import Button from "./Button";
 
 const navLinks = [
   { label: "Home", href: "/" },
-  { label: "Layanan", href: "/#layanan" },
-  { label: "Portofolio", href: "/#portofolio" },
-  { label: "Tentang", href: "/#tentang" },
+  { label: "Layanan", href: "/layanan" },
+  { label: "Portofolio", href: "/portofolio" },
+  { label: "Tentang Kami", href: "/tentang" },
   { label: "FAQ", href: "/#faq" },
 ];
 
-export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
+export default function Navbar({ isSubpage = false }: { isSubpage?: boolean }) {
+  const [scrolled, setScrolled] = useState(isSubpage);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
+    if (isSubpage) { setScrolled(true); return; }
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [isSubpage]);
 
   // Lock body scroll when drawer open
   useEffect(() => {
@@ -104,7 +105,7 @@ export default function Navbar() {
             </Button>
             <Button
               variant="filled"
-              href="https://wa.me/6281234567890?text=Halo%20REACreative%2C%20saya%20ingin%20konsultasi%20gratis"
+              href="https://wa.me/628971302817?text=Halo%20REACreative%2C%20saya%20ingin%20konsultasi%20gratis"
               id="nav-konsultasi-gratis"
               target="_blank"
               rel="noopener noreferrer"

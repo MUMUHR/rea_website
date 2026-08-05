@@ -11,7 +11,32 @@ import Footer from "@/app/components/landing/Footer";
 import WhatsAppFloat from "@/app/components/landing/WhatsAppFloat";
 import ScrollReveal from "@/app/components/landing/ScrollReveal";
 
-export default function Home() {
+import {
+  getSiteSettings,
+  getClientLogos,
+  getServicesHomepage,
+  getPortfolioHomepage,
+} from "@/lib/data";
+
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  // Fetch homepage data in parallel from database
+  const [settings, clientLogos, services, portfolio] = await Promise.all([
+    getSiteSettings(),
+    getClientLogos(),
+    getServicesHomepage(),
+    getPortfolioHomepage(),
+  ]);
+
+  const stats = [
+    { value: settings.stats_projects || "120+", label: "Project Ditangani" },
+    { value: settings.stats_clients || "80+", label: "Klien Aktif" },
+    { value: settings.stats_years || "3+", label: "Tahun Pengalaman" },
+  ];
+
+  const waNumber = settings.whatsapp_number || "628971302817";
+
   return (
     <>
       {/* Scroll reveal observer — runs client-side */}
@@ -23,13 +48,13 @@ export default function Home() {
       {/* Main content */}
       <main id="main-content">
         {/* 1. Hero — white bg with shape composition */}
-        <HeroSection />
+        <HeroSection stats={stats} waNumber={waNumber} />
 
         {/* 2. Client Logos — bg-alt light gray marquee */}
-        <ClientMarquee />
+        <ClientMarquee initialBrands={clientLogos} />
 
-        {/* 3. Services — dark dayum background */}
-        <ServiceCards />
+        {/* 3. Services — dark background */}
+        <ServiceCards initialServices={services} />
 
         {/* 4. Pricing — white bg with dual-shape composition */}
         <PricingSection />
@@ -38,19 +63,19 @@ export default function Home() {
         <WhyUsSection />
 
         {/* 6. Portfolio — white bg */}
-        <PortfolioSection />
+        <PortfolioSection initialPortfolio={portfolio} />
 
         {/* 7. FAQ — white bg */}
         <FaqSection />
 
-        {/* 8. CTA — dark dayum background */}
+        {/* 8. CTA — dark background */}
         <CtaSection />
       </main>
 
       {/* Footer — deepest dark (--support) */}
-      <Footer />
+      <Footer settings={settings} />
 
-      {/* WhatsApp Floating Button (green, not brand red — §3.8) */}
+      {/* WhatsApp Floating Button */}
       <WhatsAppFloat />
     </>
   );

@@ -2,7 +2,13 @@ import Image from "next/image";
 import { Zap, Headphones, ArrowRight } from "lucide-react";
 import Button from "./Button";
 
-const stats = [
+interface HeroSectionProps {
+  stats?: { value: string; label: string }[];
+  waNumber?: string;
+  waText?: string;
+}
+
+const defaultStats = [
   { value: "120+", label: "Project Ditangani" },
   { value: "80+", label: "Klien Aktif" },
   { value: "3+", label: "Tahun Pengalaman" },
@@ -21,7 +27,10 @@ const trustBadges = [
   },
 ];
 
-export default function HeroSection() {
+export default function HeroSection({ stats = defaultStats, waNumber = "628971302817", waText }: HeroSectionProps) {
+  const finalWaText = waText || "Halo%20REACreative.idn%2C%20saya%20ingin%20konsultasi%20gratis";
+  const waLink = `https://wa.me/${waNumber}?text=${finalWaText}`;
+
   return (
     <section
       id="home"
@@ -88,7 +97,7 @@ export default function HeroSection() {
             <div className="flex flex-wrap gap-3 items-center">
               <Button
                 variant="filled"
-                href="https://wa.me/6281234567890?text=Halo%20REACreative%2C%20saya%20ingin%20konsultasi%20gratis"
+                href={waLink}
                 id="hero-cta-primary"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -130,7 +139,7 @@ export default function HeroSection() {
 
             {/* Stats Row */}
             <div className="flex items-center gap-8 pt-4 border-t border-[var(--border-light)]">
-              {stats.map((stat, i) => (
+              {stats.map((stat) => (
                 <div key={stat.label} className="flex flex-col">
                   <span className="text-2xl font-bold text-brand leading-none">
                     {stat.value}
@@ -180,7 +189,7 @@ export default function HeroSection() {
             <div
               className="absolute"
               style={{
-                 width: "88%",
+                width: "88%",
                 height: "155%",
                 top: "7%",
                 left: "2%",
@@ -196,20 +205,7 @@ export default function HeroSection() {
                 className="object-cover rounded-sm grayscale contrast-110 "
                 sizes="(max-width: 768px) 90vw, 45vw"
               />
-              {/* Duotone overlay — brand tint */}
-              {/* <div
-                className="absolute inset-0 rounded-sm mix-blend-multiply opacity-20 bg-brand"
-                aria-hidden="true"
-              /> */}
             </div>
-
-            {/* Decorative corner accent */}
-            {/* <div
-              className="absolute bottom-3 left-0 z-10"
-              aria-hidden="true"
-            >
-              <div className="w-10 h-10 border-l-4 border-b-4 border-brand rounded-bl-sm" />
-            </div> */}
           </div>
         </div>
       </div>

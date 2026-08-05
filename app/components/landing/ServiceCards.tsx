@@ -1,12 +1,17 @@
-import { Globe, Smartphone, Monitor, ArrowRight } from "lucide-react";
+import * as Icons from "lucide-react";
 import Image from "next/image";
+import { Service } from "@/lib/data";
 
-const services = [
+interface ServiceCardsProps {
+  initialServices?: Service[];
+}
+
+const defaultServices = [
   {
-    num: "01",
-    icon: <Globe size={20} className="text-white" />,
+    id: "1",
+    number: "01",
     title: "Website",
-    desc: "Tampilan profesional untuk memperkuat kredibilitas bisnis, layanan, portofolio, dan identitas brand Anda di dunia digital.",
+    description: "Tampilan profesional untuk memperkuat kredibilitas bisnis, layanan, portofolio, dan identitas brand Anda di dunia digital.",
     items: [
       "Landing Page",
       "Website Artikel & Berita",
@@ -15,13 +20,15 @@ const services = [
       "Website E-Commerce",
       "Dashboard & Data Management",
     ],
-    href: "/#layanan",
+    icon_name: "Globe",
+    show_on_homepage: true,
+    sort_order: 1,
   },
   {
-    num: "02",
-    icon: <Smartphone size={20} className="text-white" />,
+    id: "2",
+    number: "02",
     title: "Mobile App",
-    desc: "Aplikasi mobile yang memperkuat kredibilitas bisnis dan identitas brand Anda di dunia digital.",
+    description: "Aplikasi mobile yang memperkuat kredibilitas bisnis dan identitas brand Anda di dunia digital.",
     items: [
       "Aplikasi Mobile Android & iOS",
       "Aplikasi E-Commerce",
@@ -30,13 +37,15 @@ const services = [
       "Booking & Reservasi",
       "Aplikasi Custom",
     ],
-    href: "/#layanan",
+    icon_name: "Smartphone",
+    show_on_homepage: true,
+    sort_order: 2,
   },
   {
-    num: "03",
-    icon: <Monitor size={20} className="text-white" />,
+    id: "3",
+    number: "03",
     title: "Desktop App",
-    desc: "Aplikasi desktop yang memperkuat operasional bisnis Anda dengan sistem yang andal dan mudah digunakan.",
+    description: "Aplikasi desktop yang memperkuat operasional bisnis Anda dengan sistem yang andal dan mudah digunakan.",
     items: [
       "Sistem Informasi Manajemen",
       "Aplikasi Administrasi",
@@ -45,11 +54,13 @@ const services = [
       "Manajemen Bisnis",
       "Aplikasi Desktop Custom",
     ],
-    href: "/#layanan",
+    icon_name: "Monitor",
+    show_on_homepage: true,
+    sort_order: 3,
   },
 ];
 
-export default function ServiceCards() {
+export default function ServiceCards({ initialServices = defaultServices }: ServiceCardsProps) {
   return (
     <section
       id="layanan"
@@ -58,7 +69,7 @@ export default function ServiceCards() {
     >
       {/* Background image — subtle texture bottom-left */}
       <div
-        className="absolute  left-0 top-0 w-1/3 h-full  pointer-events-none opacity-[0.12]"
+        className="absolute left-0 top-0 w-1/3 h-full pointer-events-none opacity-[0.12]"
         aria-hidden="true"
       >
         <Image
@@ -93,65 +104,71 @@ export default function ServiceCards() {
               dan siap membantu kebutuhan bisnis Anda.
             </p>
             <a
-              href="/#layanan-detail"
+              href="/layanan"
               className="inline-flex items-center gap-2 text-sm font-semibold text-brand hover:text-brand-hover transition-colors"
             >
-              Lihat Semua Layanan <ArrowRight size={16} />
+              Lihat Semua Layanan <Icons.ArrowRight size={16} />
             </a>
           </div>
         </div>
 
         {/* Cards Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {services.map((svc, idx) => (
-            <article
-              key={svc.title}
-              className="service-card group relative bg-[var(--support)] rounded-lg p-7 flex flex-col gap-5 reveal"
-              style={{ "--reveal-delay": `${idx * 100}ms` } as React.CSSProperties}
-            >
-              {/* Card number — top right decorative */}
-              <span
-                className="absolute top-5 right-6 text-4xl font-black text-white/[0.06] select-none pointer-events-none leading-none tabular-nums"
-                aria-hidden="true"
+          {initialServices.map((svc, idx) => {
+            const IconComponent = (Icons as any)[svc.icon_name || "Globe"] || Icons.Globe;
+
+            return (
+              <article
+                key={svc.id}
+                className="service-card group relative bg-[var(--support)] rounded-lg p-7 flex flex-col gap-5 reveal"
+                style={{ "--reveal-delay": `${idx * 100}ms` } as React.CSSProperties}
               >
-                {svc.num}
-              </span>
+                {/* Card number — top right decorative */}
+                <span
+                  className="absolute top-5 right-6 text-4xl font-black text-white/[0.06] select-none pointer-events-none leading-none tabular-nums"
+                  aria-hidden="true"
+                >
+                  {svc.number}
+                </span>
 
-              {/* Icon */}
-              <div className="flex-shrink-0 w-10 h-10 rounded-md bg-brand flex items-center justify-center">
-                {svc.icon}
-              </div>
+                {/* Icon */}
+                <div className="flex-shrink-0 w-10 h-10 rounded-md bg-brand flex items-center justify-center">
+                  <IconComponent size={20} className="text-white" />
+                </div>
 
-              {/* Content */}
-              <div className="flex flex-col gap-3 flex-1">
-                <h3 className="text-lg font-bold text-white">{svc.title}</h3>
-                <p className="text-sm text-[var(--text-inv-muted)] leading-relaxed">
-                  {svc.desc}
-                </p>
+                {/* Content */}
+                <div className="flex flex-col gap-3 flex-1">
+                  <h3 className="text-lg font-bold text-white">{svc.title}</h3>
+                  <p className="text-sm text-[var(--text-inv-muted)] leading-relaxed">
+                    {svc.description}
+                  </p>
 
-                <ul className="flex flex-col gap-1.5 mt-1" role="list">
-                  {svc.items.map((item) => (
-                    <li
-                      key={item}
-                      className="flex items-center gap-2 text-sm text-[var(--text-inv-muted)]"
-                    >
-                      <span className="w-1 h-1 rounded-full bg-brand flex-shrink-0" aria-hidden="true" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                  {svc.items && svc.items.length > 0 && (
+                    <ul className="flex flex-col gap-1.5 mt-1" role="list">
+                      {svc.items.map((item) => (
+                        <li
+                          key={item}
+                          className="flex items-center gap-2 text-sm text-[var(--text-inv-muted)]"
+                        >
+                          <span className="w-1.5 h-1.5 rounded-full bg-brand flex-shrink-0" aria-hidden="true" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
 
-              {/* CTA */}
-              <a
-                href={svc.href}
-                className="inline-flex items-center gap-2 text-sm font-semibold text-brand hover:gap-3 transition-all duration-200 group-hover:text-brand"
-                aria-label={`Explore more tentang ${svc.title}`}
-              >
-                Explore More <ArrowRight size={15} />
-              </a>
-            </article>
-          ))}
+                {/* CTA */}
+                <a
+                  href="/layanan"
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-brand hover:gap-3 transition-all duration-200 group-hover:text-brand"
+                  aria-label={`Explore more tentang ${svc.title}`}
+                >
+                  Explore More <Icons.ArrowRight size={15} />
+                </a>
+              </article>
+            );
+          })}
         </div>
       </div>
     </section>

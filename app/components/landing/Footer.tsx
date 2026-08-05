@@ -1,41 +1,44 @@
 import Link from "next/link";
-import { Instagram, Facebook, Youtube, Twitter } from "lucide-react";
+import { Instagram, Facebook, Youtube, Linkedin, Globe } from "lucide-react";
 
-// currentYear must be computed client-side in Next.js App Router
-// to avoid "used new Date() before accessing uncached data" error
-const CURRENT_YEAR = 2026; // Update annually, or use a client component
+interface FooterProps {
+  settings?: Record<string, string>;
+}
 
-const footerLinks = {
-  layanan: [
-    { label: "Website", href: "/#layanan" },
-    { label: "Mobile App", href: "/#layanan" },
-    { label: "Desktop App", href: "/#layanan" },
-    { label: "E-Commerce", href: "/#layanan" },
-    { label: "Sistem Custom", href: "/#layanan" },
-  ],
-  bisnis: [
-    { label: "Tentang Kami", href: "/#tentang" },
-    { label: "Portofolio", href: "/#portofolio" },
-    { label: "FAQ", href: "/#faq" },
-    { label: "Blog", href: "/blog" },
-    { label: "QR Generator", href: "/qr-generator" },
-  ],
-  kontak: [
-    { label: "reacreative.idn@gmail.com", href: "mailto:reacreative.idn@gmail.com" },
-    { label: "WhatsApp: +62 812 3456 7890", href: "https://wa.me/6281234567890" },
-    { label: "Instagram @reacreative.idn", href: "https://instagram.com/reacreative.idn" },
-  ],
-};
+export default function Footer({ settings = {} }: FooterProps) {
+  const currentYear = new Date().getFullYear();
 
-const socials = [
-  { icon: <Instagram size={16} />, href: "https://instagram.com/reacreative.idn", label: "Instagram REACreative" },
-  { icon: <Facebook size={16} />, href: "https://facebook.com/reacreative", label: "Facebook REACreative" },
-  { icon: <Youtube size={16} />, href: "https://youtube.com/reacreative", label: "YouTube REACreative" },
-  { icon: <Twitter size={16} />, href: "https://twitter.com/reacreative", label: "Twitter REACreative" },
-];
+  const waNumber = settings.whatsapp_number || "628971302817";
+  const emailContact = settings.email_contact || "reacreative.idn@gmail.com";
+  const address = settings.address || "Kampung Jawa Lama, Kota Lhokseumawe, Aceh, Indonesia";
 
-export default function Footer() {
-  const currentYear = CURRENT_YEAR;
+  const footerLinks = {
+    layanan: [
+      { label: "Website & Landing Page", href: "/layanan" },
+      { label: "Mobile App", href: "/layanan" },
+      { label: "E-Commerce", href: "/layanan" },
+      { label: "Sistem Akademik", href: "/layanan" },
+      { label: "Sistem Custom", href: "/layanan" },
+    ],
+    bisnis: [
+      { label: "Tentang Kami", href: "/tentang" },
+      { label: "Portofolio", href: "/portofolio" },
+      { label: "FAQ", href: "/#faq" },
+      { label: "Hubungi Kami", href: `https://wa.me/${waNumber}` },
+    ],
+    kontak: [
+      { label: emailContact, href: `mailto:${emailContact}` },
+      { label: `WhatsApp: +${waNumber}`, href: `https://wa.me/${waNumber}` },
+      { label: address, href: "#" },
+    ],
+  };
+
+  const socials = [
+    { icon: <Instagram size={16} />, href: settings.instagram_url || "https://instagram.com/reacreative.idn", label: "Instagram" },
+    { icon: <Facebook size={16} />, href: settings.facebook_url || "https://facebook.com/reacreative", label: "Facebook" },
+    { icon: <Youtube size={16} />, href: settings.youtube_url || "https://youtube.com/reacreative", label: "YouTube" },
+    { icon: <Linkedin size={16} />, href: settings.linkedin_url || "https://linkedin.com", label: "LinkedIn" },
+  ].filter(s => s.href);
 
   return (
     <footer className="bg-[var(--support)] text-[var(--text-inv)]" role="contentinfo">
