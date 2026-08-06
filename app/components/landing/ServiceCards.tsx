@@ -67,109 +67,136 @@ export default function ServiceCards({ initialServices = defaultServices }: Serv
       className="relative bg-dayum overflow-hidden"
       aria-labelledby="layanan-heading"
     >
-      {/* Background image — subtle texture bottom-left */}
-      <div
-        className="absolute left-0 top-0 w-1/3 h-full pointer-events-none opacity-[0.12]"
-        aria-hidden="true"
-      >
-        <Image
-          src="/img/gambar_section_3.png"
-          alt=""
-          fill
-          className="object-cover object-right-top"
-          sizes="20vw"
-        />
-      </div>
+      {/* Subtle background decoration textures */}
+      <div className="absolute left-0 top-0 w-96 h-96 bg-[#e11d2e]/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute right-0 bottom-0 w-96 h-96 bg-[#e11d2e]/5 rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative max-w-[1400px] mx-auto px-6 lg:px-12 py-24">
 
         {/* Section Header */}
         <div className="grid lg:grid-cols-2 gap-12 items-start mb-16 reveal">
           <div>
-            <span className="text-xs font-bold uppercase tracking-widest text-brand block mb-3">
+            <span className="text-xs font-bold uppercase tracking-widest text-[#e11d2e] block mb-3">
               Layanan Utama
             </span>
             <h2
               id="layanan-heading"
-              className="text-display-lg font-bold text-white leading-tight"
+              className="text-display-lg font-bold text-white leading-tight font-black"
             >
-              Kami Mengubah Ide Menjadi{" "}
-              <span className="text-brand">Produk Digital</span>
+              Kami Mengubah Ide Menjadi <span className="text-[#e11d2e]">Produk Digital</span>
             </h2>
           </div>
           <div className="flex flex-col gap-4 lg:pt-12">
-            <p className="text-[var(--text-inv-muted)] leading-relaxed">
-              Kami merancang dan membangun produk digital yang bukan hanya
-              menarik secara visual, tetapi juga fungsional, mudah digunakan,
-              dan siap membantu kebutuhan bisnis Anda.
+            <p className="text-gray-400 font-semibold leading-relaxed text-sm">
+              Kami merancang dan membangun produk digital yang bukan hanya menarik secara visual, tetapi juga fungsional, mudah digunakan, dan siap membantu kebutuhan operasional serta perkembangan bisnis Anda.
             </p>
             <a
               href="/layanan"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-brand hover:text-brand-hover transition-colors"
+              className="inline-flex items-center gap-2 text-xs font-bold text-[#e11d2e] hover:text-white transition-colors"
             >
-              Lihat Semua Layanan <Icons.ArrowRight size={16} />
+              Lihat Semua Layanan <Icons.ArrowRight size={14} className="animate-pulse" />
             </a>
           </div>
         </div>
 
-        {/* Cards Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {initialServices.map((svc, idx) => {
-            const IconComponent = (Icons as any)[svc.icon_name || "Globe"] || Icons.Globe;
+        {/* Dynamic Layout: Side-by-side illustration and cards grid */}
+        <div className="grid lg:grid-cols-12 gap-8 items-stretch">
+          
+          {/* Left Column: Visual Mockup Illustration Card (incorporating konten_gambar_1.png) */}
+          <div className="lg:col-span-4 relative rounded-2xl overflow-hidden border border-white/5 bg-[#121115]/80 shadow-2xl flex flex-col justify-between p-6 group/img min-h-[380px] lg:min-h-full">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-red-500/5 rounded-full blur-3xl pointer-events-none transition-opacity group-hover/img:opacity-100 opacity-60" />
+            
+            <div className="relative z-10 space-y-1.5">
+              <span className="text-[10px] font-bold tracking-widest text-[#e11d2e] uppercase block">
+                Solusi Terintegrasi
+              </span>
+              <h4 className="text-sm font-black text-white leading-tight">
+                Teknologi Andal Untuk Efisiensi & Skalabilitas Bisnis
+              </h4>
+            </div>
 
-            return (
-              <article
-                key={svc.id}
-                className="service-card group relative bg-[var(--support)] rounded-lg p-7 flex flex-col gap-5 reveal"
-                style={{ "--reveal-delay": `${idx * 100}ms` } as React.CSSProperties}
-              >
-                {/* Card number — top right decorative */}
-                <span
-                  className="absolute top-5 right-6 text-4xl font-black text-white/[0.06] select-none pointer-events-none leading-none tabular-nums"
-                  aria-hidden="true"
+            {/* Clean Illustration Frame */}
+            <div className="relative w-full h-48 lg:h-64 mt-6 rounded-xl overflow-hidden border border-white/5 shadow-2xl bg-black">
+              <Image
+                src="/img/konten_gambar_1.png"
+                alt="Solusi Digital REACreative"
+                fill
+                className="object-cover transition-transform duration-700 group-hover/img:scale-105"
+                sizes="(max-w-768px) 100vw, 30vw"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#121115]/50 to-transparent" />
+            </div>
+
+            <div className="relative z-10 mt-6 pt-4 border-t border-white/5">
+              <p className="text-[10px] text-gray-400 font-semibold leading-relaxed">
+                Kami memastikan setiap platform memiliki desain responsif, arsitektur modular, dan kecepatan akses yang optimal.
+              </p>
+            </div>
+          </div>
+
+          {/* Right Column: Service Cards Grid */}
+          <div className="lg:col-span-8 grid md:grid-cols-2 gap-6">
+            {initialServices.map((svc, idx) => {
+              const IconComponent = (Icons as any)[svc.icon_name || "Globe"] || Icons.Globe;
+
+              return (
+                <article
+                  key={svc.id}
+                  className="group relative bg-[#121115]/65 border border-white/5 hover:border-white/10 rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
                 >
-                  {svc.number}
-                </span>
+                  <div className="space-y-4">
+                    {/* Card Icon & Header */}
+                    <div className="flex items-center justify-between">
+                      <div className="w-10 h-10 rounded-xl bg-red-950/50 text-[#e11d2e] border border-red-900/30 flex items-center justify-center transition-colors group-hover:bg-[#e11d2e] group-hover:text-white">
+                        <IconComponent size={20} />
+                      </div>
+                      <span className="text-xl font-black text-white/5 select-none pointer-events-none tabular-nums">
+                        {svc.number}
+                      </span>
+                    </div>
 
-                {/* Icon */}
-                <div className="flex-shrink-0 w-10 h-10 rounded-md bg-brand flex items-center justify-center">
-                  <IconComponent size={20} className="text-white" />
-                </div>
+                    {/* Content */}
+                    <div className="space-y-2">
+                      <h3 className="text-sm font-bold text-white group-hover:text-[#e11d2e] transition-colors">{svc.title}</h3>
+                      <p className="text-xs text-gray-300 leading-relaxed font-semibold">
+                        {svc.description}
+                      </p>
+                    </div>
 
-                {/* Content */}
-                <div className="flex flex-col gap-3 flex-1">
-                  <h3 className="text-lg font-bold text-white">{svc.title}</h3>
-                  <p className="text-sm text-[var(--text-inv-muted)] leading-relaxed">
-                    {svc.description}
-                  </p>
+                    {/* Items List */}
+                    {svc.items && svc.items.length > 0 && (
+                      <ul className="grid grid-cols-2 gap-1.5 pt-3 border-t border-white/5" role="list">
+                        {svc.items.slice(0, 4).map((item) => (
+                          <li
+                            key={item}
+                            className="flex items-center gap-1.5 text-[10px] text-gray-300 font-semibold"
+                          >
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#e11d2e]/70 flex-shrink-0" aria-hidden="true" />
+                            <span className="truncate">{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
 
-                  {svc.items && svc.items.length > 0 && (
-                    <ul className="flex flex-col gap-1.5 mt-1" role="list">
-                      {svc.items.map((item) => (
-                        <li
-                          key={item}
-                          className="flex items-center gap-2 text-sm text-[var(--text-inv-muted)]"
-                        >
-                          <span className="w-1.5 h-1.5 rounded-full bg-brand flex-shrink-0" aria-hidden="true" />
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
+                  {/* Action Link */}
+                  <div className="pt-6 mt-4 border-t border-white/5">
+                    <a
+                      href="/layanan"
+                      className="inline-flex items-center gap-1.5 text-[10px] font-bold text-[#e11d2e] hover:text-white transition-colors"
+                      aria-label={`Explore more tentang ${svc.title}`}
+                    >
+                      Explore More <Icons.ArrowUpRight size={12} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    </a>
+                  </div>
 
-                {/* CTA */}
-                <a
-                  href="/layanan"
-                  className="inline-flex items-center gap-2 text-sm font-semibold text-brand hover:gap-3 transition-all duration-200 group-hover:text-brand"
-                  aria-label={`Explore more tentang ${svc.title}`}
-                >
-                  Explore More <Icons.ArrowRight size={15} />
-                </a>
-              </article>
-            );
-          })}
+                </article>
+              );
+            })}
+          </div>
+
         </div>
+
       </div>
     </section>
   );

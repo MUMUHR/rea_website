@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import DashboardInvoices from "@/app/admin/_components/DashboardInvoices";
 import {
   Briefcase,
   Layers,
@@ -90,14 +91,14 @@ export default async function AdminDashboard() {
             <p className="text-xs font-semibold text-gray-400 mt-1">Hari ini adalah {dateStr}</p>
           </div>
           <div className="flex items-center gap-3">
-            <button className="w-10 h-10 rounded-xl bg-white border border-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:shadow-sm transition-all active:scale-95">
+            <button className="w-10 h-10 rounded-lg bg-white border border-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:shadow-sm transition-all active:scale-95">
               <Search size={18} />
             </button>
             <Link
-              href="/admin/portofolio"
-              className="flex items-center gap-2 bg-[#0a0915] text-white text-xs font-bold px-4 py-2.5 rounded-xl hover:bg-gray-800 transition-colors shadow-md active:scale-95"
+              href="/admin/invoice/buat"
+              className="flex items-center gap-2 bg-[#e11d2e] hover:bg-[#c41526] text-white text-xs font-bold px-4 py-2.5 rounded-lg transition-colors shadow-md active:scale-95"
             >
-              <Plus size={14} /> Add New Project
+              <Plus size={14} /> Buat Invoice
             </Link>
           </div>
         </div>
@@ -105,9 +106,8 @@ export default async function AdminDashboard() {
         {/* Three Colorful Project Cards from the photo */}
         <div className="grid sm:grid-cols-3 gap-5">
           {/* Card 1: Purple (Portofolio) */}
-          <div className="bg-gradient-to-br from-[#7c3aed] to-[#6d28d9] text-white rounded-3xl p-6 shadow-xl relative overflow-hidden flex flex-col justify-between h-48">
+          <div className="bg-gradient-to-br from-[#7c3aed] to-[#6d28d9] text-white rounded-xl p-6 shadow-xl relative overflow-hidden flex flex-col justify-between h-48">
             <div className="flex justify-between items-start">
-              {/* Stacked avatars or preview circles */}
               <div className="flex -space-x-1.5 overflow-hidden">
                 <div className="w-6 h-6 rounded-full border border-[#7c3aed] bg-white/20 flex items-center justify-center text-[9px] font-bold">1</div>
                 <div className="w-6 h-6 rounded-full border border-[#7c3aed] bg-white/20 flex items-center justify-center text-[9px] font-bold">2</div>
@@ -131,7 +131,7 @@ export default async function AdminDashboard() {
           </div>
 
           {/* Card 2: Mint Green (Layanan) */}
-          <div className="bg-gradient-to-br from-[#0d9488] to-[#0f766e] text-white rounded-3xl p-6 shadow-xl relative overflow-hidden flex flex-col justify-between h-48">
+          <div className="bg-gradient-to-br from-[#0d9488] to-[#0f766e] text-white rounded-xl p-6 shadow-xl relative overflow-hidden flex flex-col justify-between h-48">
             <div className="flex justify-between items-start">
               <div className="flex -space-x-1.5 overflow-hidden">
                 <div className="w-6 h-6 rounded-full border border-[#0d9488] bg-white/20 flex items-center justify-center text-[9px] font-bold">W</div>
@@ -156,7 +156,7 @@ export default async function AdminDashboard() {
           </div>
 
           {/* Card 3: Coral/Orange (Testimonial) */}
-          <div className="bg-gradient-to-br from-[#f97316] to-[#ea580c] text-white rounded-3xl p-6 shadow-xl relative overflow-hidden flex flex-col justify-between h-48">
+          <div className="bg-gradient-to-br from-[#f97316] to-[#ea580c] text-white rounded-xl p-6 shadow-xl relative overflow-hidden flex flex-col justify-between h-48">
             <div className="flex justify-between items-start">
               <div className="flex -space-x-1.5 overflow-hidden">
                 <div className="w-6 h-6 rounded-full border border-[#f97316] bg-white/20 flex items-center justify-center text-[9px] font-bold">★</div>
@@ -181,77 +181,78 @@ export default async function AdminDashboard() {
           </div>
         </div>
 
-        {/* Lower Row: Tasks for today vs Statistics */}
+        {/* Lower Row: Invoices Area vs Stats & Activity */}
         <div className="grid sm:grid-cols-2 gap-8">
           
-          {/* Tasks for today style list -> Aktivitas Pengunjung Terbaru */}
+          {/* Dynamic Invoice Block loaded Client-Side to prevent hydration issues */}
           <div className="space-y-4">
-            <h2 className="text-lg font-black text-[#0f172a]">Aktivitas Pengunjung</h2>
-            <div className="space-y-3">
-              {!recentEvents?.length ? (
-                <div className="bg-white border border-gray-100 rounded-2xl p-8 text-center shadow-sm">
-                  <p className="text-xs text-gray-400">Belum ada aktivitas terbaru</p>
-                </div>
-              ) : (
-                recentEvents.map((ev: { id: string; event_type: string; label?: string; created_at: string }) => {
-                  const style = eventColors[ev.event_type] ?? { border: "border-gray-300", bg: "bg-gray-50", text: "text-gray-600" };
-                  return (
-                    <div
-                      key={ev.id}
-                      className={`bg-white border-l-4 ${style.border} rounded-2xl px-5 py-4 shadow-[0_4px_20px_rgb(0,0,0,0.01)] border-t border-r border-b border-gray-100/50 flex items-center justify-between`}
-                    >
-                      <div>
-                        <p className="text-sm font-bold text-gray-800">{ev.label ?? "Pengunjung Klik Akses"}</p>
-                        <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mt-1">
-                          {ev.event_type.replace(/_/g, " ")}
-                        </p>
-                      </div>
-                      <CheckCircle2 size={20} className="text-emerald-500 flex-shrink-0" />
-                    </div>
-                  );
-                })
-              )}
-            </div>
+            <h2 className="text-lg font-black text-[#0f172a]">Keuangan & Invoice</h2>
+            <DashboardInvoices />
           </div>
 
-          {/* Statistics widgets */}
-          <div className="space-y-4">
-            <h2 className="text-lg font-black text-[#0f172a]">Statistik</h2>
-            <div className="grid grid-cols-2 gap-3">
-              {/* Stat card 1 */}
-              <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-[0_4px_20px_rgb(0,0,0,0.01)] text-center flex flex-col justify-center h-24">
-                <p className="text-2xl font-black text-gray-900">{todayViews.count ?? 0}</p>
-                <p className="text-[10px] text-gray-400 font-bold uppercase mt-1">Today Views</p>
+          {/* Statistics and Activity Column */}
+          <div className="space-y-6">
+            
+            {/* Quick Stats Grid */}
+            <div className="space-y-4">
+              <h2 className="text-lg font-black text-[#0f172a]">Statistik</h2>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-white border border-gray-100 rounded-lg p-4 shadow-[0_4px_20px_rgb(0,0,0,0.01)] text-center flex flex-col justify-center h-24">
+                  <p className="text-2xl font-black text-gray-900">{todayViews.count ?? 0}</p>
+                  <p className="text-[10px] text-gray-400 font-bold uppercase mt-1">Today Views</p>
+                </div>
+                <div className="bg-white border border-gray-100 rounded-lg p-4 shadow-[0_4px_20px_rgb(0,0,0,0.01)] text-center flex flex-col justify-center h-24">
+                  <p className="text-2xl font-black text-[#0d9488]">{avgLabel}</p>
+                  <p className="text-[10px] text-gray-400 font-bold uppercase mt-1">Avg. Duration</p>
+                </div>
               </div>
-              {/* Stat card 2 */}
-              <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-[0_4px_20px_rgb(0,0,0,0.01)] text-center flex flex-col justify-center h-24">
-                <p className="text-2xl font-black text-[#0d9488]">{avgLabel}</p>
-                <p className="text-[10px] text-gray-400 font-bold uppercase mt-1">Avg. Duration</p>
-              </div>
-              {/* Dashed Add New Widget style card */}
-              <Link
-                href="/admin/tentang"
-                className="col-span-2 border-2 border-dashed border-gray-200 rounded-2xl p-4 shadow-[0_4px_20px_rgb(0,0,0,0.01)] text-center flex items-center justify-center gap-2 hover:bg-gray-50/50 hover:border-gray-300 transition-all h-14 group"
-              >
-                <Plus size={16} className="text-gray-400 group-hover:text-gray-600" />
-                <span className="text-xs font-bold text-gray-400 group-hover:text-gray-600 uppercase tracking-wider">Configure Site Settings</span>
-              </Link>
             </div>
 
-            {/* Pro Plan style banner card */}
-            <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-[0_4px_20px_rgb(0,0,0,0.01)] flex items-center justify-between relative overflow-hidden bg-gradient-to-r from-white to-red-50/30">
+            {/* Aktivitas Pengunjung */}
+            <div className="space-y-4">
+              <h2 className="text-lg font-black text-[#0f172a]">Aktivitas Pengunjung</h2>
+              <div className="space-y-3">
+                {!recentEvents?.length ? (
+                  <div className="bg-white border border-gray-100 rounded-lg p-6 text-center shadow-sm">
+                    <p className="text-xs text-gray-400">Belum ada aktivitas terbaru</p>
+                  </div>
+                ) : (
+                  recentEvents.map((ev: { id: string; event_type: string; label?: string; created_at: string }) => {
+                    const style = eventColors[ev.event_type] ?? { border: "border-gray-300", bg: "bg-gray-50", text: "text-gray-600" };
+                    return (
+                      <div
+                        key={ev.id}
+                        className={`bg-white border-l-4 ${style.border} rounded-lg px-4 py-3 shadow-[0_4px_20px_rgb(0,0,0,0.01)] border-t border-r border-b border-gray-100 flex items-center justify-between`}
+                      >
+                        <div className="min-w-0 flex-1 pr-2">
+                          <p className="text-xs font-bold text-gray-800 truncate">{ev.label ?? "Pengunjung Klik Akses"}</p>
+                          <p className="text-[9px] font-bold uppercase tracking-wider text-gray-400 mt-0.5">
+                            {ev.event_type.replace(/_/g, " ")}
+                          </p>
+                        </div>
+                        <CheckCircle2 size={16} className="text-emerald-500 flex-shrink-0" />
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+
+            {/* Premium Plan Banner */}
+            <div className="bg-white border border-gray-100 rounded-lg p-5 shadow-[0_4px_20px_rgb(0,0,0,0.01)] flex items-center justify-between relative overflow-hidden bg-gradient-to-r from-white to-red-50/30">
               <div className="space-y-1">
                 <div className="flex items-center gap-1.5 text-xs font-bold text-[#e11d2e]">
                   <Sparkles size={13} />
                   <span>Premium Plan</span>
                 </div>
-                <p className="text-sm font-bold text-[#0f172a]">REACreative Admin</p>
+                <p className="text-sm font-bold text-[#0f172a]">REA<span className="text-brand">Creative</span> Admin</p>
                 <p className="text-[10px] text-gray-400 font-medium">Sistem bisnis berjalan optimal</p>
               </div>
-              <div className="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center text-[#e11d2e] flex-shrink-0 animate-pulse">
-                <Layers size={22} />
+              <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-[#e11d2e] flex-shrink-0 animate-pulse">
+                <Layers size={20} />
               </div>
             </div>
+
           </div>
 
         </div>
@@ -265,7 +266,7 @@ export default async function AdminDashboard() {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-black text-[#0f172a] tracking-tight">Pesan Masuk</h2>
           <div className="flex items-center gap-2">
-            <button className="w-10 h-10 rounded-xl bg-white border border-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:shadow-sm transition-all active:scale-95 relative">
+            <button className="w-10 h-10 rounded-lg bg-white border border-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:shadow-sm transition-all active:scale-95 relative">
               <Bell size={16} />
               <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#e11d2e]" />
             </button>
@@ -275,7 +276,7 @@ export default async function AdminDashboard() {
         {/* Time-based schedule timeline matching photo calendar */}
         <div className="space-y-6 relative before:absolute before:left-14 before:top-2 before:bottom-2 before:w-0.5 before:bg-gray-100">
           {!recentContacts || recentContacts.length === 0 ? (
-            <div className="bg-white border border-gray-100 rounded-2xl p-8 text-center shadow-sm ml-16">
+            <div className="bg-white border border-gray-100 rounded-lg p-8 text-center shadow-sm ml-16">
               <p className="text-xs text-gray-400">Belum ada pesan masuk</p>
             </div>
           ) : (
@@ -287,17 +288,14 @@ export default async function AdminDashboard() {
 
               return (
                 <div key={c.id} className="flex gap-4 items-start relative group">
-                  {/* Time label on the left */}
                   <div className="w-10 text-right flex-shrink-0 pt-2">
                     <p className="text-xs font-bold text-gray-800 leading-none">{timeStr}</p>
                     <p className="text-[9px] text-gray-400 font-bold mt-1 uppercase">{dateStr}</p>
                   </div>
 
-                  {/* Circle dot on the timeline indicator */}
                   <div className="w-4 h-4 rounded-full border-4 border-white bg-red-500 shadow-sm relative z-10 mt-2.5 flex-shrink-0 left-0.5" />
 
-                  {/* Schedule item card */}
-                  <div className={`flex-1 bg-white border-l-4 ${border} rounded-2xl p-4 shadow-[0_4px_20px_rgb(0,0,0,0.01)] border-t border-r border-b border-gray-100 hover:shadow-md transition-shadow`}>
+                  <div className={`flex-1 bg-white border-l-4 ${border} rounded-lg p-4 shadow-[0_4px_20px_rgb(0,0,0,0.01)] border-t border-r border-b border-gray-100 hover:shadow-md transition-shadow`}>
                     <div className="flex justify-between items-start gap-1">
                       <p className="text-xs font-bold text-[#0f172a] truncate">{c.name}</p>
                       <MessageSquare size={12} className="text-gray-300 flex-shrink-0" />

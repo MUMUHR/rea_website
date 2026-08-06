@@ -181,4 +181,14 @@ insert into public.testimonials (author_name, role, company, message, rating, so
    5, 2, true),
   ('Dr. Siti Aisyah', 'Direktur', 'STIKes Aceh',
    'Sistem akademik yang dibangun REACreative benar-benar mengubah cara kami mengelola data mahasiswa. Sangat efisien dan mudah digunakan.',
-   5, 3, true);
+   5, 3, true),
+  ('Hendra Wijaya', 'CEO', 'Vanguard Retail',
+   'Sistem POS kasir dari REACreative membantu kami memantau penjualan harian toko retail kami secara real-time dari mana saja. Investasi terbaik kami!',
+   5, 4, true),
+  ('Sarah Salsabila', 'Pimpinan', 'Nangro Media Group',
+   'Sistem optimasi SEO otomatis dari portal Nangro.id yang dibuat REACreative meningkatkan traffic harian kami hingga 200% dalam waktu singkat.',
+   5, 5, true),
+  ('Adi Putera', 'Owner', 'Kopi Nusantara',
+   'Branding digital dan website profil yang dibuat REACreative benar-benar mewakili rasa premium dari produk kopi kami. Klien kami sangat menyukainya.',
+   5, 6, true);
+

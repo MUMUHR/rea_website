@@ -5,6 +5,7 @@ import ServiceCards from "@/app/components/landing/ServiceCards";
 import PricingSection from "@/app/components/landing/PricingSection";
 import WhyUsSection from "@/app/components/landing/WhyUsSection";
 import PortfolioSection from "@/app/components/landing/PortfolioSection";
+import TestimonialsSection from "@/app/components/landing/TestimonialsSection";
 import FaqSection from "@/app/components/landing/FaqSection";
 import CtaSection from "@/app/components/landing/CtaSection";
 import Footer from "@/app/components/landing/Footer";
@@ -16,17 +17,19 @@ import {
   getClientLogos,
   getServicesHomepage,
   getPortfolioHomepage,
+  getTestimonials,
 } from "@/lib/data";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
   // Fetch homepage data in parallel from database
-  const [settings, clientLogos, services, portfolio] = await Promise.all([
+  const [settings, clientLogos, services, portfolio, testimonials] = await Promise.all([
     getSiteSettings(),
     getClientLogos(),
     getServicesHomepage(),
     getPortfolioHomepage(),
+    getTestimonials(),
   ]);
 
   const stats = [
@@ -65,10 +68,13 @@ export default async function Home() {
         {/* 6. Portfolio — white bg */}
         <PortfolioSection initialPortfolio={portfolio} />
 
-        {/* 7. FAQ — white bg */}
+        {/* 8. Testimonials — dynamically pulled from DB */}
+        <TestimonialsSection initialTestimonials={testimonials} />
+
+        {/* 9. FAQ — white bg */}
         <FaqSection />
 
-        {/* 8. CTA — dark background */}
+        {/* 10. CTA — dark background */}
         <CtaSection />
       </main>
 
