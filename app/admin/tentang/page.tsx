@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { Save } from "lucide-react";
+import { DEFAULT_SETTINGS } from "@/lib/data";
 
 type Setting = { key: string; value: string; description?: string };
 
@@ -27,44 +27,48 @@ export default function TentangAdminPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState("");
-  const supabase = createClient();
+
+  const fetchSettings = () => {
+    setLoading(true);
+    const saved = localStorage.getItem("rea_site_settings");
+    if (saved) {
+      try {
+        setSettings(JSON.parse(saved));
+      } catch (e) {
+        console.error(e);
+      }
+    } else {
+      setSettings(DEFAULT_SETTINGS);
+      localStorage.setItem("rea_site_settings", JSON.stringify(DEFAULT_SETTINGS));
+    }
+    setLoading(false);
+  };
 
   useEffect(() => {
-    const fetchSettings = async () => {
-      setLoading(true);
-      const { data } = await supabase.from("site_settings").select("*");
-      const map: Record<string, string> = {};
-      (data as Setting[] ?? []).forEach(s => { map[s.key] = s.value; });
-      setSettings(map);
-      setLoading(false);
-    };
     fetchSettings();
   }, []);
 
   const saveAll = async () => {
     setSaving(true);
     setMsg("");
-    const updates = DISPLAY_KEYS.map(({ key }) => ({
-      key,
-      value: settings[key] ?? "",
-    }));
+    try {
+      const updatedMap: Record<string, string> = {};
+      DISPLAY_KEYS.forEach(({ key }) => {
+        updatedMap[key] = settings[key] ?? "";
+      });
 
-    let hasError = false;
-    for (const update of updates) {
-      const { error } = await supabase
-        .from("site_settings")
-        .upsert({ key: update.key, value: update.value }, { onConflict: "key" });
-      if (error) {
-        hasError = true;
-        setMsg(`Error pada ${update.key}: ${error.message}`);
-        break;
-      }
-    }
+      localStorage.setItem("rea_site_settings", JSON.stringify(updatedMap));
 
-    setSaving(false);
-    if (!hasError) {
+      // Simulate a small delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+
       setMsg("✓ Semua pengaturan berhasil disimpan!");
       setTimeout(() => setMsg(""), 4000);
+      fetchSettings();
+    } catch (err: any) {
+      setMsg(`Error: ${err.message}`);
+    } finally {
+      setSaving(false);
     }
   };
 

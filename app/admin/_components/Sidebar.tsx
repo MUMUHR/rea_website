@@ -3,7 +3,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 import {
   LayoutDashboard,
   Briefcase,
@@ -67,9 +66,7 @@ export default function AdminSidebar({ userEmail }: { userEmail?: string }) {
   const router = useRouter();
 
   const handleLogout = async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    router.push("/auth/login");
+    router.push("/");
   };
 
   const isActive = (item: NavItem) => {

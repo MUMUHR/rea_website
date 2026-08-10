@@ -1,18 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { ImageIcon, Trash2, Upload, RefreshCw } from "lucide-react";
-
-type ClientLogo = {
-  id: string;
-  name: string;
-  logo_url: string;
-  website_url?: string;
-  sort_order: number;
-  is_active: boolean;
-  created_at?: string;
-};
+import { DEFAULT_CLIENT_LOGOS, ClientLogo } from "@/lib/data";
 
 export default function LogoClientPage() {
   const [logos, setLogos] = useState<ClientLogo[]>([]);
@@ -24,15 +14,19 @@ export default function LogoClientPage() {
   const [uploading, setUploading] = useState(false);
   const [msg, setMsg] = useState({ text: "", isError: false });
 
-  const supabase = createClient();
-
-  const fetchLogos = async () => {
+  const fetchLogos = () => {
     setLoading(true);
-    const { data: rows } = await supabase
-      .from("client_logos")
-      .select("*")
-      .order("sort_order");
-    setLogos(rows ?? []);
+    const saved = localStorage.getItem("rea_client_logos");
+    if (saved) {
+      try {
+        setLogos(JSON.parse(saved));
+      } catch (e) {
+        console.error(e);
+      }
+    } else {
+      setLogos(DEFAULT_CLIENT_LOGOS);
+      localStorage.setItem("rea_client_logos", JSON.stringify(DEFAULT_CLIENT_LOGOS));
+    }
     setLoading(false);
   };
 
@@ -74,17 +68,19 @@ export default function LogoClientPage() {
       try {
         const nextOrder = logos.length ? Math.max(...logos.map(l => l.sort_order)) + 1 : 1;
         
-        const { error } = await supabase
-          .from("client_logos")
-          .insert({
-            name: clientName,
-            logo_url: base64Data,
-            website_url: "",
-            sort_order: nextOrder,
-            is_active: true
-          });
+        const newLogo: ClientLogo = {
+          id: Math.random().toString(36).substring(2, 9),
+          name: clientName,
+          logo_url: base64Data,
+          website_url: "",
+          sort_order: nextOrder
+        };
 
-        if (error) throw error;
+        const updatedList = [...logos, newLogo];
+        localStorage.setItem("rea_client_logos", JSON.stringify(updatedList));
+
+        // Simulate network latency
+        await new Promise(resolve => setTimeout(resolve, 600));
 
         setMsg({ text: "Logo berhasil diunggah!", isError: false });
         setClientName("");
@@ -113,161 +109,160 @@ export default function LogoClientPage() {
     if (!confirm("Apakah Anda yakin ingin menghapus logo client ini?")) return;
 
     try {
-      const { error } = await supabase
-        .from("client_logos")
-        .delete()
-        .eq("id", id);
-
-      if (error) throw error;
-
-      setMsg({ text: "Logo berhasil dihapus.", isError: false });
+      const updatedList = logos.filter(l => l.id !== id);
+      localStorage.setItem("rea_client_logos", JSON.stringify(updatedList));
       fetchLogos();
     } catch (err: any) {
-      setMsg({ text: `Gagal menghapus: ${err.message}`, isError: true });
+      alert(`Gagal menghapus logo: ${err.message}`);
     }
   };
 
-  const formatDate = (dateStr?: string) => {
-    if (!dateStr) return "31 Jul 2026 15:50"; // Mock default fallback
-    const d = new Date(dateStr);
-    return d.toLocaleDateString("id-ID", {
-      day: "numeric",
-      month: "short",
-      year: "numeric"
-    }) + " " + d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
-  };
-
   return (
-    <div className="space-y-8 animate-fadeIn">
-      {/* Header matching old web style */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-black text-[#0f172a] tracking-tight">Logo Client</h1>
-          <p className="text-xs font-semibold text-gray-400 mt-1">Kelola logo klien utama yang tampil di bagian Marquee beranda</p>
-        </div>
+    <div className="space-y-6">
+      
+      {/* Page Header */}
+      <div>
+        <h1 className="text-3xl font-black text-[#0f172a] tracking-tight">Logo Klien Marquee</h1>
+        <p className="text-xs font-semibold text-gray-400 mt-1">
+          Kelola logo mitra bisnis dan klien yang tampil berputar (marquee) di halaman beranda.
+        </p>
       </div>
 
       <div className="grid lg:grid-cols-12 gap-8 items-start">
         
-        {/* Left Column: Upload Form (lg:col-span-4) */}
-        <div className="lg:col-span-4 bg-white border border-gray-100 rounded-lg p-6 shadow-[0_4px_20px_rgb(0,0,0,0.01)] space-y-5">
-          <div>
-            <h2 className="text-sm font-black text-gray-900 leading-none">Upload Logo Baru</h2>
-            <p className="text-[10px] text-gray-400 font-semibold mt-1.5 leading-relaxed">
-              Unggah satu atau beberapa logo client untuk otomatis tampil di marquee halaman utama.
-            </p>
+        {/* Kolom Kiri: Form Upload Logo */}
+        <div className="lg:col-span-5 bg-white border border-gray-100 rounded-xl p-5 shadow-sm space-y-5">
+          <div className="space-y-1">
+            <h3 className="text-xs font-black text-gray-800 uppercase tracking-wider">Unggah Logo Baru</h3>
+            <p className="text-[10px] text-gray-400 font-semibold">Gunakan gambar dengan format PNG transparan untuk hasil terbaik.</p>
           </div>
 
           <form onSubmit={handleUpload} className="space-y-4">
-            {/* Client Name Field */}
+            
+            {/* Nama Instansi */}
             <div className="space-y-1.5">
-              <label className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">Nama Klien / Instansi</label>
+              <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
+                Nama Instansi / Klien
+              </label>
               <input
                 type="text"
-                placeholder="Contoh: Logo Pii"
+                placeholder="Contoh: STIKes Aceh"
                 value={clientName}
                 onChange={(e) => setClientName(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-xs font-semibold text-gray-800 placeholder-gray-400 focus:outline-none focus:border-brand transition-colors bg-white"
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-xs font-semibold text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-red-500 transition-colors bg-[#FAF9F6]"
                 required
               />
             </div>
 
-            {/* File Logo Picker */}
+            {/* File Picker */}
             <div className="space-y-1.5">
-              <label className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">File Logo</label>
-              <div className="border border-gray-200 rounded-lg p-3 bg-gray-50/50 flex flex-col items-center justify-center text-center relative hover:bg-gray-50 transition-colors group">
+              <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
+                Berkas Gambar Logo
+              </label>
+              <div className="border border-dashed border-gray-300 hover:border-red-500 rounded-lg p-5 text-center cursor-pointer transition-colors relative bg-[#FAF9F6]">
                 <input
                   id="file-logo-input"
                   type="file"
                   accept="image/*"
                   onChange={handleFileChange}
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                  required
+                  required={!file}
                 />
-                <Upload size={16} className="text-gray-400 group-hover:text-brand transition-colors mb-1.5" />
-                <span className="text-[10px] text-gray-400 font-bold truncate max-w-[200px]">
-                  {file ? file.name : "Choose File"}
-                </span>
-                <span className="text-[8px] text-gray-400 font-medium mt-0.5">Format: JPG, PNG, WEBP, atau SVG. Max 4MB.</span>
+                <div className="space-y-2">
+                  <div className="w-10 h-10 rounded-full bg-red-50 text-[#e11d2e] flex items-center justify-center mx-auto">
+                    <Upload size={18} />
+                  </div>
+                  <p className="text-xs font-bold text-gray-700">
+                    {file ? file.name : "Pilih atau Drag Berkas Gambar"}
+                  </p>
+                  <p className="text-[9px] text-gray-400 font-semibold">
+                    PNG, JPG, SVG hingga 4MB (Disarankan latar belakang transparan)
+                  </p>
+                </div>
               </div>
             </div>
 
-            {/* Message alert */}
+            {/* Feedback message */}
             {msg.text && (
-              <div className={`text-[10px] p-2.5 rounded-lg font-bold border ${
-                msg.isError ? "bg-red-50 text-red-600 border-red-100" : "bg-emerald-50 text-emerald-600 border-emerald-100"
-              }`}>
+              <div className={`p-3 rounded-lg border text-xs font-semibold ${msg.isError ? "bg-red-50 border-red-150 text-red-700" : "bg-emerald-50 border-emerald-150 text-emerald-700"}`}>
                 {msg.text}
               </div>
             )}
 
-            {/* Upload Button */}
+            {/* Submit Button */}
             <button
               type="submit"
-              disabled={uploading || !file || !clientName}
-              className="w-full py-2.5 bg-[#e11d2e] hover:bg-[#c41526] text-white text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-2 disabled:bg-gray-150 disabled:text-gray-400 disabled:cursor-not-allowed shadow-md active:scale-95"
+              disabled={uploading}
+              className="w-full bg-[#e11d2e] hover:bg-[#c41526] hover:shadow text-white font-bold text-xs py-2.5 rounded-lg transition-all flex items-center justify-center gap-1.5 active:scale-95 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
             >
               {uploading ? (
                 <>
-                  <RefreshCw size={13} className="animate-spin" />
-                  <span>Mengunggah...</span>
+                  <RefreshCw size={14} className="animate-spin" />
+                  <span>Mengunggah Logo...</span>
                 </>
               ) : (
-                <span>Upload Logo</span>
+                <>
+                  <Upload size={14} />
+                  <span>Unggah Logo Klien</span>
+                </>
               )}
             </button>
+
           </form>
         </div>
 
-        {/* Right Column: Active Logos Grid (lg:col-span-8) */}
-        <div className="lg:col-span-8 bg-white border border-gray-100 rounded-lg p-6 shadow-[0_4px_20px_rgb(0,0,0,0.01)] space-y-6">
-          <div>
-            <h2 className="text-sm font-black text-gray-900 leading-none">Daftar Logo Client</h2>
-            <p className="text-[10px] text-gray-400 font-semibold mt-1.5 leading-relaxed">
-              Total {logos.filter(l => l.is_active).length} logo aktif di halaman utama.
-            </p>
+        {/* Kolom Kanan: Daftar Grid Logo Aktif */}
+        <div className="lg:col-span-7 bg-white border border-gray-100 rounded-xl p-5 shadow-sm space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xs font-black text-gray-800 uppercase tracking-wider">Daftar Logo Aktif</h3>
+            <span className="text-[10px] bg-red-50 text-[#e11d2e] border border-red-100 font-black px-2 py-0.5 rounded-full">
+              {logos.length} Klien
+            </span>
           </div>
 
           {loading ? (
-            <div className="py-12 text-center text-gray-400 flex flex-col items-center gap-2">
-              <RefreshCw size={20} className="animate-spin text-brand" />
-              <span className="text-xs font-semibold">Memuat logo client...</span>
+            <div className="text-center py-10">
+              <RefreshCw className="animate-spin text-gray-400 mx-auto" />
             </div>
           ) : logos.length === 0 ? (
-            <div className="py-12 text-center text-gray-400 flex flex-col items-center gap-3">
-              <ImageIcon size={32} className="text-gray-200" />
-              <span className="text-xs font-semibold">Belum ada logo klien yang diunggah.</span>
+            <div className="text-center py-12 text-gray-400 space-y-2">
+              <ImageIcon size={32} className="mx-auto text-gray-300" />
+              <p className="text-xs">Belum ada logo klien yang diunggah.</p>
             </div>
           ) : (
-            <div className="grid sm:grid-cols-2 gap-4">
+            <div className="grid sm:grid-cols-3 gap-4">
               {logos.map((logo) => (
-                <div 
-                  key={logo.id} 
-                  className="bg-white border border-gray-100 rounded-lg overflow-hidden flex flex-col justify-between hover:shadow-md transition-shadow group"
+                <div
+                  key={logo.id}
+                  className="group relative bg-[#FAF9F6] border border-gray-200/80 rounded-xl p-4 flex flex-col justify-between items-center h-32 hover:border-[#e11d2e] hover:shadow transition-all"
                 >
-                  {/* Image Display */}
-                  <div className="h-32 bg-gray-50/50 flex items-center justify-center p-6 border-b border-gray-50 relative">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={logo.logo_url}
-                      alt={logo.name}
-                      className="max-h-full max-w-full object-contain transition-opacity duration-300 group-hover:opacity-100"
-                    />
+                  
+                  {/* Preview image */}
+                  <div className="flex-1 flex items-center justify-center w-full h-16 relative">
+                    {logo.logo_url ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={logo.logo_url}
+                        alt={logo.name}
+                        className="max-h-12 max-w-full object-contain filter group-hover:scale-105 transition-transform"
+                      />
+                    ) : (
+                      <ImageIcon size={24} className="text-gray-300" />
+                    )}
                   </div>
 
-                  {/* Details & Delete Button */}
-                  <div className="p-4 flex items-center justify-between gap-2">
-                    <div className="min-w-0">
-                      <p className="text-xs font-bold text-gray-800 truncate">{logo.name}</p>
-                      <p className="text-[9px] text-gray-400 font-bold mt-1 uppercase">{formatDate(logo.created_at)}</p>
-                    </div>
+                  {/* Client title */}
+                  <div className="w-full text-center mt-2 pt-2 border-t border-gray-200/50 flex justify-between items-center">
+                    <p className="text-[10px] font-bold text-gray-700 truncate flex-1 text-left pr-2">{logo.name}</p>
                     <button
                       onClick={() => handleDelete(logo.id)}
-                      className="text-red-500 hover:text-white border border-red-200 hover:bg-red-500 hover:border-red-500 text-[10px] font-bold px-3 py-1.5 rounded-md transition-all active:scale-95 flex-shrink-0"
+                      className="text-gray-400 hover:text-red-500 transition-colors p-1"
+                      title="Hapus Logo"
                     >
-                      Hapus
+                      <Trash2 size={12} />
                     </button>
                   </div>
+
                 </div>
               ))}
             </div>
@@ -275,6 +270,7 @@ export default function LogoClientPage() {
         </div>
 
       </div>
+
     </div>
   );
 }

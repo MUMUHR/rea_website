@@ -1,23 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { Plus, Pencil, Trash2, ToggleLeft, ToggleRight, Search, X, Check, Globe } from "lucide-react";
 import * as Icons from "lucide-react";
-
-type Service = {
-  id: string;
-  number: string;
-  title: string;
-  description: string;
-  price_label?: string;
-  items: string[];
-  icon_name?: string;
-  wa_text?: string;
-  show_on_homepage: boolean;
-  sort_order: number;
-  is_active: boolean;
-};
+import { DEFAULT_SERVICES, Service } from "@/lib/data";
 
 const empty: Omit<Service, "id"> = {
   number: "",
@@ -47,12 +33,20 @@ export default function LayananAdminPage() {
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState("");
   const [search, setSearch] = useState("");
-  const supabase = createClient();
 
-  const fetchData = async () => {
+  const fetchData = () => {
     setLoading(true);
-    const { data: rows } = await supabase.from("services").select("*").order("sort_order");
-    setData(rows ?? []);
+    const saved = localStorage.getItem("rea_services");
+    if (saved) {
+      try {
+        setData(JSON.parse(saved));
+      } catch (e) {
+        console.error(e);
+      }
+    } else {
+      setData(DEFAULT_SERVICES);
+      localStorage.setItem("rea_services", JSON.stringify(DEFAULT_SERVICES));
+    }
     setLoading(false);
   };
 
@@ -76,29 +70,47 @@ export default function LayananAdminPage() {
   const save = async () => {
     setSaving(true);
     setMsg("");
-    const payload = { ...form, items: itemsText.split("\n").map(s => s.trim()).filter(Boolean) };
-    const { error } = editing
-      ? await supabase.from("services").update(payload).eq("id", editing.id)
-      : await supabase.from("services").insert(payload);
-    setSaving(false);
-    if (error) {
-      setMsg(`Error: ${error.message}`);
-      return;
+    const items = itemsText.split("\n").map(s => s.trim()).filter(Boolean);
+
+    try {
+      let updatedList: Service[];
+      if (editing) {
+        updatedList = data.map(s => s.id === editing.id ? { ...s, ...form, items } : s);
+      } else {
+        const newService: Service = {
+          ...form,
+          id: Math.random().toString(36).substring(2, 9),
+          items
+        };
+        updatedList = [...data, newService];
+      }
+
+      localStorage.setItem("rea_services", JSON.stringify(updatedList));
+
+      // Simulate a small delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      setMsg("✓ Berhasil disimpan");
+      setShowModal(false);
+      fetchData();
+      setTimeout(() => setMsg(""), 3000);
+    } catch (err: any) {
+      setMsg(`Error: ${err.message}`);
+    } finally {
+      setSaving(false);
     }
-    setMsg("✓ Berhasil disimpan");
-    setShowModal(false);
-    fetchData();
-    setTimeout(() => setMsg(""), 3000);
   };
 
   const remove = async (id: string) => {
     if (!confirm("Hapus layanan ini?")) return;
-    await supabase.from("services").delete().eq("id", id);
+    const updatedList = data.filter(s => s.id !== id);
+    localStorage.setItem("rea_services", JSON.stringify(updatedList));
     fetchData();
   };
 
   const toggle = async (id: string, field: "is_active" | "show_on_homepage", val: boolean) => {
-    await supabase.from("services").update({ [field]: !val }).eq("id", id);
+    const updatedList = data.map(s => s.id === id ? { ...s, [field]: !val } : s);
+    localStorage.setItem("rea_services", JSON.stringify(updatedList));
     fetchData();
   };
 

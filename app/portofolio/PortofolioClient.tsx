@@ -27,9 +27,9 @@ export default function PortofolioClient({ initialItems, stats }: PortofolioClie
   return (
     <>
       {/* ── Category Filter Chips ── */}
-      <section className="py-8 border-b border-[var(--border-light)] bg-white sticky top-16 z-40">
+      <section className="pt-8 pb-5 border-b border-[var(--border-light)] bg-white sticky top-16 z-40">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-16">
-          <div className="flex items-center gap-2.5 overflow-x-auto pb-1 scrollbar-none">
+          <div className="flex items-center gap-2.5 overflow-x-auto pb-4 scrollbar-none">
             {categories.map((cat) => (
               <button
                 key={cat}
@@ -54,7 +54,7 @@ export default function PortofolioClient({ initialItems, stats }: PortofolioClie
             <p className="text-center text-[var(--text-muted)] py-16">Belum ada proyek di kategori ini.</p>
           ) : (
             <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
-              {filtered.map((item) => (
+              {filtered.map((item, idx) => (
                 <article
                   key={item.id}
                   className="group bg-white border border-[var(--border-light)] rounded-2xl overflow-hidden flex flex-col
@@ -67,6 +67,7 @@ export default function PortofolioClient({ initialItems, stats }: PortofolioClie
                       src={item.image_url}
                       alt={item.title}
                       fill
+                      priority={idx === 0}
                       className="object-cover group-hover:scale-[1.04] transition-transform duration-500"
                       sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
                     />

@@ -1,4 +1,6 @@
-import { createClient } from "@/lib/supabase/server";
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import DashboardInvoices from "@/app/admin/_components/DashboardInvoices";
 import {
@@ -19,49 +21,94 @@ import {
   Bell,
   Sparkles,
 } from "lucide-react";
+import {
+  DEFAULT_PORTFOLIO,
+  DEFAULT_SERVICES,
+  DEFAULT_TESTIMONIALS,
+  PortfolioItem,
+  Service,
+  Testimonial
+} from "@/lib/data";
 
-export const dynamic = "force-dynamic";
+interface ContactMessage {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  message: string;
+  created_at: string;
+}
 
-export default async function AdminDashboard() {
-  const supabase = await createClient();
+export default function AdminDashboard() {
+  const [mounted, setMounted] = useState(false);
+  const [portfolioData, setPortfolioData] = useState<PortfolioItem[]>([]);
+  const [layananData, setLayananData] = useState<Service[]>([]);
+  const [testimonialData, setTestimonialData] = useState<Testimonial[]>([]);
+  const [recentContacts, setRecentContacts] = useState<ContactMessage[]>([]);
 
-  // Load count stats
-  const [portfolio, layanan, klien, testimonial] = await Promise.all([
-    supabase.from("portfolio_items").select("*"),
-    supabase.from("services").select("*"),
-    supabase.from("client_logos").select("*"),
-    supabase.from("testimonials").select("*"),
-  ]);
+  useEffect(() => {
+    setMounted(true);
 
-  const portfolioData = portfolio.data ?? [];
-  const layananData = layanan.data ?? [];
-  const testimonialData = testimonial.data ?? [];
+    // Hydrate data from localStorage
+    const savedPortfolio = localStorage.getItem("rea_portfolio");
+    if (savedPortfolio) {
+      try { setPortfolioData(JSON.parse(savedPortfolio)); } catch (e) { console.error(e); }
+    } else {
+      setPortfolioData(DEFAULT_PORTFOLIO);
+      localStorage.setItem("rea_portfolio", JSON.stringify(DEFAULT_PORTFOLIO));
+    }
 
-  const activePortfolios = portfolioData.filter(i => i.is_active).length;
-  const activeLayanan = layananData.filter(i => i.is_active).length;
-  const activeTestimonials = testimonialData.filter(i => i.is_active).length;
+    const savedServices = localStorage.getItem("rea_services");
+    if (savedServices) {
+      try { setLayananData(JSON.parse(savedServices)); } catch (e) { console.error(e); }
+    } else {
+      setLayananData(DEFAULT_SERVICES);
+      localStorage.setItem("rea_services", JSON.stringify(DEFAULT_SERVICES));
+    }
 
-  const pctPortfolio = portfolioData.length ? Math.round((activePortfolios / portfolioData.length) * 100) : 0;
-  const pctLayanan = layananData.length ? Math.round((activeLayanan / layananData.length) * 100) : 0;
-  const pctTestimonials = testimonialData.length ? Math.round((activeTestimonials / testimonialData.length) * 100) : 0;
+    const savedTestimonials = localStorage.getItem("rea_testimonials");
+    if (savedTestimonials) {
+      try { setTestimonialData(JSON.parse(savedTestimonials)); } catch (e) { console.error(e); }
+    } else {
+      setTestimonialData(DEFAULT_TESTIMONIALS);
+      localStorage.setItem("rea_testimonials", JSON.stringify(DEFAULT_TESTIMONIALS));
+    }
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+    const savedMessages = localStorage.getItem("rea_messages");
+    if (savedMessages) {
+      try { setRecentContacts(JSON.parse(savedMessages).slice(0, 4)); } catch (e) { console.error(e); }
+    } else {
+      // Setup some default inbox messages if none exist
+      const defaultMsgs: ContactMessage[] = [
+        {
+          id: "m-1",
+          name: "Rizky Pratama",
+          email: "rizky@gmail.com",
+          phone: "081234567890",
+          message: "Halo REACreative, saya ingin menanyakan mengenai penawaran jasa pembuatan SIAKAD kesehatan untuk kampus kami.",
+          created_at: new Date(Date.now() - 3600000).toISOString() // 1 hour ago
+        },
+        {
+          id: "m-2",
+          name: "Siti Rahma",
+          email: "siti@indocoffee.com",
+          phone: "089876543210",
+          message: "Tertarik dengan layanan company profile website. Apakah ada opsi cicilan pembayaran?",
+          created_at: new Date(Date.now() - 7200000).toISOString() // 2 hours ago
+        }
+      ];
+      setRecentContacts(defaultMsgs);
+      localStorage.setItem("rea_messages", JSON.stringify(defaultMsgs));
+    }
+  }, []);
 
-  const [todayViews, weekViews, totalEvents, avgDuration] = await Promise.all([
-    supabase.from("page_views").select("id", { count: "exact", head: true }).gte("created_at", today.toISOString()),
-    supabase.from("page_views").select("id", { count: "exact", head: true }).gte("created_at", new Date(Date.now() - 7 * 86400000).toISOString()),
-    supabase.from("visitor_events").select("id", { count: "exact", head: true }).gte("created_at", today.toISOString()),
-    supabase.from("page_views").select("duration_sec").gte("created_at", new Date(Date.now() - 7 * 86400000).toISOString()).gt("duration_sec", 0),
-  ]);
+  const activePortfolios = portfolioData.length;
+  const activeLayanan = layananData.length;
+  const activeTestimonials = testimonialData.length;
 
-  const avgSec = avgDuration.data?.length
-    ? Math.round(avgDuration.data.reduce((a, b) => a + (b.duration_sec || 0), 0) / avgDuration.data.length)
-    : 0;
-  const avgLabel = avgSec >= 60 ? `${Math.floor(avgSec / 60)}m ${avgSec % 60}s` : `${avgSec}s`;
-
-  const { data: recentEvents } = await supabase.from("visitor_events").select("*").order("created_at", { ascending: false }).limit(3);
-  const { data: recentContacts } = await supabase.from("contacts").select("*").order("created_at", { ascending: false }).limit(4);
+  const pctPortfolio = 100;
+  const pctLayanan = 100;
+  const pctTestimonials = 100;
 
   const dateStr = new Date().toLocaleDateString("id-ID", {
     weekday: "long",
@@ -70,14 +117,15 @@ export default async function AdminDashboard() {
     year: "numeric",
   });
 
-  const eventColors: Record<string, { border: string; bg: string; text: string }> = {
-    wa_click: { border: "border-emerald-500", bg: "bg-emerald-50", text: "text-emerald-700" },
-    cta_click: { border: "border-rose-500", bg: "bg-rose-50", text: "text-rose-700" },
-    portfolio_click: { border: "border-blue-500", bg: "bg-blue-50", text: "text-blue-700" },
-    service_click: { border: "border-violet-500", bg: "bg-violet-50", text: "text-violet-700" },
-  };
-
   const contactColors = ["border-[#0d9488]", "border-[#f97316]", "border-[#7c3aed]", "border-rose-500"];
+
+  if (!mounted) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="w-8 h-8 rounded-full border-4 border-red-200 border-t-red-500 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="grid lg:grid-cols-12 gap-8 items-start">
@@ -181,81 +229,8 @@ export default async function AdminDashboard() {
           </div>
         </div>
 
-        {/* Lower Row: Invoices Area vs Stats & Activity */}
-        <div className="grid sm:grid-cols-2 gap-8">
-          
-          {/* Dynamic Invoice Block loaded Client-Side to prevent hydration issues */}
-          <div className="space-y-4">
-            <h2 className="text-lg font-black text-[#0f172a]">Keuangan & Invoice</h2>
-            <DashboardInvoices />
-          </div>
-
-          {/* Statistics and Activity Column */}
-          <div className="space-y-6">
-            
-            {/* Quick Stats Grid */}
-            <div className="space-y-4">
-              <h2 className="text-lg font-black text-[#0f172a]">Statistik</h2>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="bg-white border border-gray-100 rounded-lg p-4 shadow-[0_4px_20px_rgb(0,0,0,0.01)] text-center flex flex-col justify-center h-24">
-                  <p className="text-2xl font-black text-gray-900">{todayViews.count ?? 0}</p>
-                  <p className="text-[10px] text-gray-400 font-bold uppercase mt-1">Today Views</p>
-                </div>
-                <div className="bg-white border border-gray-100 rounded-lg p-4 shadow-[0_4px_20px_rgb(0,0,0,0.01)] text-center flex flex-col justify-center h-24">
-                  <p className="text-2xl font-black text-[#0d9488]">{avgLabel}</p>
-                  <p className="text-[10px] text-gray-400 font-bold uppercase mt-1">Avg. Duration</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Aktivitas Pengunjung */}
-            <div className="space-y-4">
-              <h2 className="text-lg font-black text-[#0f172a]">Aktivitas Pengunjung</h2>
-              <div className="space-y-3">
-                {!recentEvents?.length ? (
-                  <div className="bg-white border border-gray-100 rounded-lg p-6 text-center shadow-sm">
-                    <p className="text-xs text-gray-400">Belum ada aktivitas terbaru</p>
-                  </div>
-                ) : (
-                  recentEvents.map((ev: { id: string; event_type: string; label?: string; created_at: string }) => {
-                    const style = eventColors[ev.event_type] ?? { border: "border-gray-300", bg: "bg-gray-50", text: "text-gray-600" };
-                    return (
-                      <div
-                        key={ev.id}
-                        className={`bg-white border-l-4 ${style.border} rounded-lg px-4 py-3 shadow-[0_4px_20px_rgb(0,0,0,0.01)] border-t border-r border-b border-gray-100 flex items-center justify-between`}
-                      >
-                        <div className="min-w-0 flex-1 pr-2">
-                          <p className="text-xs font-bold text-gray-800 truncate">{ev.label ?? "Pengunjung Klik Akses"}</p>
-                          <p className="text-[9px] font-bold uppercase tracking-wider text-gray-400 mt-0.5">
-                            {ev.event_type.replace(/_/g, " ")}
-                          </p>
-                        </div>
-                        <CheckCircle2 size={16} className="text-emerald-500 flex-shrink-0" />
-                      </div>
-                    );
-                  })
-                )}
-              </div>
-            </div>
-
-            {/* Premium Plan Banner */}
-            <div className="bg-white border border-gray-100 rounded-lg p-5 shadow-[0_4px_20px_rgb(0,0,0,0.01)] flex items-center justify-between relative overflow-hidden bg-gradient-to-r from-white to-red-50/30">
-              <div className="space-y-1">
-                <div className="flex items-center gap-1.5 text-xs font-bold text-[#e11d2e]">
-                  <Sparkles size={13} />
-                  <span>Premium Plan</span>
-                </div>
-                <p className="text-sm font-bold text-[#0f172a]">REA<span className="text-brand">Creative</span> Admin</p>
-                <p className="text-[10px] text-gray-400 font-medium">Sistem bisnis berjalan optimal</p>
-              </div>
-              <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-[#e11d2e] flex-shrink-0 animate-pulse">
-                <Layers size={20} />
-              </div>
-            </div>
-
-          </div>
-
-        </div>
+        {/* Invoice Summary and Table Section */}
+        <DashboardInvoices />
 
       </div>
 
@@ -280,7 +255,7 @@ export default async function AdminDashboard() {
               <p className="text-xs text-gray-400">Belum ada pesan masuk</p>
             </div>
           ) : (
-            recentContacts.map((c: { id: string; name: string; message: string; created_at: string }, idx) => {
+            recentContacts.map((c: ContactMessage, idx) => {
               const border = contactColors[idx % contactColors.length];
               const date = new Date(c.created_at);
               const timeStr = date.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
@@ -288,24 +263,55 @@ export default async function AdminDashboard() {
 
               return (
                 <div key={c.id} className="flex gap-4 items-start relative group">
-                  <div className="w-10 text-right flex-shrink-0 pt-2">
-                    <p className="text-xs font-bold text-gray-800 leading-none">{timeStr}</p>
-                    <p className="text-[9px] text-gray-400 font-bold mt-1 uppercase">{dateStr}</p>
+                  {/* Left Column: Date & Time in calendar list layout */}
+                  <div className="w-10 flex-shrink-0 text-right pt-1">
+                    <p className="text-[10px] font-black text-[#e11d2e]">{timeStr}</p>
+                    <p className="text-[8px] font-bold text-gray-400 uppercase tracking-tight mt-0.5">{dateStr}</p>
                   </div>
 
-                  <div className="w-4 h-4 rounded-full border-4 border-white bg-red-500 shadow-sm relative z-10 mt-2.5 flex-shrink-0 left-0.5" />
+                  {/* Bullet node on vertical timeline line */}
+                  <div className="relative z-10 w-2.5 h-2.5 rounded-full bg-white border-2 border-[#e11d2e] mt-1.5 flex-shrink-0 -ml-1.5" />
 
-                  <div className={`flex-1 bg-white border-l-4 ${border} rounded-lg p-4 shadow-[0_4px_20px_rgb(0,0,0,0.01)] border-t border-r border-b border-gray-100 hover:shadow-md transition-shadow`}>
-                    <div className="flex justify-between items-start gap-1">
-                      <p className="text-xs font-bold text-[#0f172a] truncate">{c.name}</p>
-                      <MessageSquare size={12} className="text-gray-300 flex-shrink-0" />
+                  {/* Message Detail Card */}
+                  <div className={`flex-1 bg-white border ${border} border-l-4 rounded-xl p-4 shadow-[0_4px_20px_rgb(0,0,0,0.01)] hover:shadow-md transition-all`}>
+                    <div className="flex justify-between items-start">
+                      <h4 className="text-xs font-bold text-[#0f172a]">{c.name}</h4>
+                      <Link 
+                        href={`mailto:${c.email}`}
+                        className="text-[9px] font-semibold text-gray-400 hover:text-[#e11d2e] transition-colors"
+                      >
+                        Balas via Email
+                      </Link>
                     </div>
-                    <p className="text-[11px] text-gray-500 mt-1 line-clamp-2 leading-relaxed">{c.message}</p>
+                    {c.phone && (
+                      <p className="text-[9px] text-gray-450 mt-0.5">WhatsApp/Tel: {c.phone}</p>
+                    )}
+                    <p className="text-[10px] text-gray-500 font-semibold leading-relaxed mt-2 italic">
+                      &ldquo;{c.message}&rdquo;
+                    </p>
                   </div>
                 </div>
               );
             })
           )}
+        </div>
+
+        {/* Static Visitor stats mimicking analytics panel */}
+        <div className="bg-white border border-gray-100 rounded-xl p-5 shadow-sm space-y-4">
+          <h3 className="text-xs font-black text-gray-800 uppercase tracking-wider">Statistik Pengunjung</h3>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <p className="text-[10px] text-gray-400 font-bold uppercase">Hari Ini</p>
+              <p className="text-xl font-black text-gray-800">23</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-[10px] text-gray-400 font-bold uppercase">Avg Duration</p>
+              <p className="text-xl font-black text-gray-800">2m 45s</p>
+            </div>
+          </div>
+          <div className="bg-[#FAF9F6] p-3 rounded-lg border border-gray-100 text-[9px] text-gray-500 font-medium">
+            Status server frontend berjalan lancar tanpa database eksternal.
+          </div>
         </div>
 
       </div>

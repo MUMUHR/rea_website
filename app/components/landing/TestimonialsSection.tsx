@@ -32,20 +32,37 @@ function AvatarPreview({ url, name }: { url?: string; name: string }) {
 }
 
 export default function TestimonialsSection({ initialTestimonials = [] }: TestimonialsSectionProps) {
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(initialTestimonials);
   const [visibleIndices, setVisibleIndices] = useState<number[]>([0, 1, 2]);
   const [fadingSlot, setFadingSlot] = useState<number | null>(null);
 
   useEffect(() => {
-    if (initialTestimonials.length <= 3) return;
+    const saved = localStorage.getItem("rea_testimonials");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setTestimonials(parsed);
+        }
+      } catch (e) {
+        console.error("Failed to parse testimonials from localStorage", e);
+      }
+    } else {
+      localStorage.setItem("rea_testimonials", JSON.stringify(initialTestimonials));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (testimonials.length <= 3) return;
 
     const interval = setInterval(() => {
       // 1. Pick a random slot of the 3 visible positions to rotate
       const slotToRotate = Math.floor(Math.random() * 3);
       
       // 2. Identify indices of testimonials not currently visible
-      const visibleIds = visibleIndices.map(idx => initialTestimonials[idx]?.id);
+      const visibleIds = visibleIndices.map(idx => testimonials[idx]?.id);
       const inactiveIndices: number[] = [];
-      initialTestimonials.forEach((t, i) => {
+      testimonials.forEach((t, i) => {
         if (!visibleIds.includes(t.id)) {
           inactiveIndices.push(i);
         }
@@ -72,12 +89,12 @@ export default function TestimonialsSection({ initialTestimonials = [] }: Testim
     }, 4500); // Rotate every 4.5 seconds
 
     return () => clearInterval(interval);
-  }, [initialTestimonials, visibleIndices]);
+  }, [testimonials, visibleIndices]);
 
-  if (initialTestimonials.length === 0) return null;
+  if (testimonials.length === 0) return null;
 
   // Make sure we have enough visible testimonials mapped
-  const activeTestimonials = visibleIndices.map(idx => initialTestimonials[idx]).filter(Boolean);
+  const activeTestimonials = visibleIndices.map(idx => testimonials[idx]).filter(Boolean);
 
   return (
     <section

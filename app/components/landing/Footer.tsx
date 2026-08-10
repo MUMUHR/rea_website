@@ -1,3 +1,6 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Instagram, Facebook, Youtube, Linkedin, Globe } from "lucide-react";
 
@@ -6,11 +9,29 @@ interface FooterProps {
 }
 
 export default function Footer({ settings = {} }: FooterProps) {
+  const [siteSettings, setSiteSettings] = useState<Record<string, string>>(settings);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("rea_site_settings");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === "object") {
+          setSiteSettings(parsed);
+        }
+      } catch (e) {
+        console.error("Failed to parse settings from localStorage", e);
+      }
+    } else {
+      localStorage.setItem("rea_site_settings", JSON.stringify(settings));
+    }
+  }, []);
+
   const currentYear = new Date().getFullYear();
 
-  const waNumber = settings.whatsapp_number || "628971302817";
-  const emailContact = settings.email_contact || "reacreative.idn@gmail.com";
-  const address = settings.address || "Kampung Jawa Lama, Kota Lhokseumawe, Aceh, Indonesia";
+  const waNumber = siteSettings.whatsapp_number || "628971302817";
+  const emailContact = siteSettings.email_contact || "reacreative.idn@gmail.com";
+  const address = siteSettings.address || "Kampung Jawa Lama, Kota Lhokseumawe, Aceh, Indonesia";
 
   const footerLinks = {
     layanan: [

@@ -1,20 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { Plus, Pencil, Trash2, ToggleLeft, ToggleRight, Star, Search, X, MessageSquare } from "lucide-react";
-
-type Testimonial = {
-  id: string;
-  author_name: string;
-  role?: string;
-  company?: string;
-  message: string;
-  rating: number;
-  avatar_url?: string;
-  sort_order: number;
-  is_active: boolean;
-};
+import { DEFAULT_TESTIMONIALS, Testimonial } from "@/lib/data";
 
 const empty: Omit<Testimonial, "id"> = {
   author_name: "",
@@ -59,12 +47,20 @@ export default function TestimonialAdminPage() {
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState("");
   const [search, setSearch] = useState("");
-  const supabase = createClient();
 
-  const fetchData = async () => {
+  const fetchData = () => {
     setLoading(true);
-    const { data: rows } = await supabase.from("testimonials").select("*").order("sort_order");
-    setData(rows ?? []);
+    const saved = localStorage.getItem("rea_testimonials");
+    if (saved) {
+      try {
+        setData(JSON.parse(saved));
+      } catch (e) {
+        console.error(e);
+      }
+    } else {
+      setData(DEFAULT_TESTIMONIALS);
+      localStorage.setItem("rea_testimonials", JSON.stringify(DEFAULT_TESTIMONIALS));
+    }
     setLoading(false);
   };
 
@@ -81,28 +77,44 @@ export default function TestimonialAdminPage() {
   const save = async () => {
     setSaving(true);
     setMsg("");
-    const { error } = editing
-      ? await supabase.from("testimonials").update(form).eq("id", editing.id)
-      : await supabase.from("testimonials").insert(form);
-    setSaving(false);
-    if (error) {
-      setMsg(`Error: ${error.message}`);
-      return;
+    try {
+      let updatedList: Testimonial[];
+      if (editing) {
+        updatedList = data.map(t => t.id === editing.id ? { ...t, ...form } : t);
+      } else {
+        const newTestimonial: Testimonial = {
+          ...form,
+          id: Math.random().toString(36).substring(2, 9)
+        };
+        updatedList = [...data, newTestimonial];
+      }
+
+      localStorage.setItem("rea_testimonials", JSON.stringify(updatedList));
+
+      // Simulate a small delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      setMsg("✓ Berhasil disimpan");
+      setShowModal(false);
+      fetchData();
+    } catch (err: any) {
+      setMsg(`Error: ${err.message}`);
+    } finally {
+      setSaving(false);
+      setTimeout(() => setMsg(""), 3000);
     }
-    setMsg("✓ Berhasil disimpan");
-    setShowModal(false);
-    fetchData();
-    setTimeout(() => setMsg(""), 3000);
   };
 
   const remove = async (id: string) => {
     if (!confirm("Hapus testimonial ini?")) return;
-    await supabase.from("testimonials").delete().eq("id", id);
+    const updatedList = data.filter(t => t.id !== id);
+    localStorage.setItem("rea_testimonials", JSON.stringify(updatedList));
     fetchData();
   };
 
   const toggle = async (id: string, val: boolean) => {
-    await supabase.from("testimonials").update({ is_active: !val }).eq("id", id);
+    const updatedList = data.map(t => t.id === id ? { ...t, is_active: !val } : t);
+    localStorage.setItem("rea_testimonials", JSON.stringify(updatedList));
     fetchData();
   };
 

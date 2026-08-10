@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Zap, Headphones, ArrowRight } from "lucide-react";
+import { Zap, Headphones, ArrowRight, MessageCircle } from "lucide-react";
 import Button from "./Button";
 
 interface HeroSectionProps {
@@ -59,17 +59,17 @@ export default function HeroSection({ stats = defaultStats, waNumber = "62897130
         </div>
       </div>
 
-      <div className="max-w-[1400px] mx-auto px-6 lg:px-12 w-full pt-24 pb-16 lg:pt-28 lg:pb-20">
+      <div className="max-w-[1400px] mx-auto px-6 lg:px-12 w-full pt-24 pb-0 lg:pt-28 lg:pb-20">
         <div className="grid lg:grid-cols-[52%_48%] gap-12 lg:gap-16 items-center">
 
           {/* ── Left Column: Text ── */}
           <div className="flex flex-col gap-6 reveal">
             {/* Eyebrow Tag */}
-            <div className="inline-flex items-center gap-2 self-start">
+            {/* <div className="inline-flex items-center gap-2 self-start">
               <span className="text-xs font-semibold uppercase tracking-widest text-brand">
                 Custom Website · Sistem · Mobile App
               </span>
-            </div>
+            </div> */}
 
             {/* H1 */}
             <h1
@@ -101,7 +101,7 @@ export default function HeroSection({ stats = defaultStats, waNumber = "62897130
                 id="hero-cta-primary"
                 target="_blank"
                 rel="noopener noreferrer"
-                icon={<span className="text-xs">💬</span>}
+                icon={<MessageCircle size={15} />}
               >
                 Start From 800k
               </Button>
@@ -138,7 +138,7 @@ export default function HeroSection({ stats = defaultStats, waNumber = "62897130
             </div>
 
             {/* Stats Row */}
-            <div className="flex items-center gap-8 pt-4 border-t border-[var(--border-light)]">
+            <div className="flex flex-wrap items-center gap-4 sm:gap-8 pt-4 border-t border-[var(--border-light)]">
               {stats.map((stat) => (
                 <div key={stat.label} className="flex flex-col">
                   <span className="text-2xl font-bold text-brand leading-none">
@@ -154,14 +154,14 @@ export default function HeroSection({ stats = defaultStats, waNumber = "62897130
 
           {/* ── Right Column: Shape Composition ── */}
           <div
-            className="relative flex items-center justify-center min-h-[480px] lg:min-h-[560px] reveal reveal-delay-2"
+            className="relative flex items-end lg:items-center justify-center lg:min-h-[560px] reveal reveal-delay-2"
             aria-label="Visual komposisi hero REACreative"
           >
             {/* Layer 1 (back): --dayum shape, offset right-bottom, rotated */}
             <div
-              className="absolute bg-dayum rounded-sm"
+              className="hidden lg:block absolute bg-dayum rounded-sm"
               style={{
-                width: "120%",
+                width: "135%",
                 height: "95%",
                 top: "52%",
                 left: "40%",
@@ -173,7 +173,7 @@ export default function HeroSection({ stats = defaultStats, waNumber = "62897130
 
             {/* Layer 2 (mid): --brand red shape */}
             <div
-              className="absolute  bg-brand rounded-sm"
+              className="hidden lg:block absolute bg-brand rounded-sm"
               style={{
                 width: "150%",
                 height: "150%",
@@ -187,22 +187,14 @@ export default function HeroSection({ stats = defaultStats, waNumber = "62897130
 
             {/* Layer 3 (front): Building photo — overlaps both shapes */}
             <div
-              className="absolute"
-              style={{
-                width: "88%",
-                height: "155%",
-                top: "7%",
-                left: "2%",
-                zIndex: 3,
-                transform: "rotate(-0.5deg)",
-              }}
+              className="relative w-full h-[350px] sm:h-[400px] lg:absolute lg:w-[88%] lg:h-[155%] lg:top-[15%] lg:left-[2%] lg:rotate-[-0.5deg] z-10 lg:z-[3]"
             >
               <Image
                 src="/img/gambar_hero_section.png"
                 alt="Gedung arsitektur modern — representasi produk digital REACreative yang kuat dan presisi"
                 fill
                 priority
-                className="object-cover rounded-sm grayscale contrast-110 "
+                className="object-contain object-bottom rounded-sm grayscale contrast-110 "
                 sizes="(max-width: 768px) 90vw, 45vw"
               />
             </div>

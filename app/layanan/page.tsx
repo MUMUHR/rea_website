@@ -31,7 +31,19 @@ export default async function LayananPage() {
   return (
     <SubpageLayout>
       {/* ── Page Header ── */}
-      <section className="pt-28 pb-16 bg-gradient-to-b from-[#fff5f5] to-white border-b border-[var(--border-light)]">
+      <section className="relative pt-28 pb-16 bg-gradient-to-b from-[#fff5f5] to-white border-b border-[var(--border-light)] overflow-hidden">
+        <div
+            className="hidden lg:block absolute bg-brand rounded-sm"
+            style={{
+              width: "50%",
+              height: "180%",
+              top: "-40%",
+              left: "60%",
+              transform: "rotate(-20deg)",
+              zIndex: 2,
+            }}
+            aria-hidden="true"
+          />
         <div className="max-w-[1400px] mx-auto px-6 lg:px-16">
           <p className="text-xs font-bold tracking-[3px] uppercase text-brand mb-3">
             Solusi Teknologi Terintegrasi
@@ -85,7 +97,7 @@ export default async function LayananPage() {
                     <p className="text-sm text-[var(--text-muted)] leading-relaxed flex-1">
                       {svc.description}
                     </p>
-                    
+
                     {/* Sub-items bullet list */}
                     {svc.items && svc.items.length > 0 && (
                       <ul className="flex flex-col gap-1.5 my-2 border-t border-gray-100 pt-3" role="list">

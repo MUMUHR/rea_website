@@ -17,6 +17,21 @@ const navLinks = [
 export default function Navbar({ isSubpage = false }: { isSubpage?: boolean }) {
   const [scrolled, setScrolled] = useState(isSubpage);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [waNumber, setWaNumber] = useState("628971302817");
+
+  useEffect(() => {
+    const saved = localStorage.getItem("rea_site_settings");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.whatsapp_number) {
+          setWaNumber(parsed.whatsapp_number);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (isSubpage) { setScrolled(true); return; }
@@ -106,7 +121,7 @@ export default function Navbar({ isSubpage = false }: { isSubpage?: boolean }) {
             </Button>
             <Button
               variant="filled"
-              href="https://wa.me/628971302817?text=Halo%20REACreative%2C%20saya%20ingin%20konsultasi%20gratis"
+              href={`https://wa.me/${waNumber}?text=Halo%20REACreative%2C%20saya%20ingin%20konsultasi%20gratis`}
               id="nav-konsultasi-gratis"
               target="_blank"
               rel="noopener noreferrer"
@@ -134,7 +149,7 @@ export default function Navbar({ isSubpage = false }: { isSubpage?: boolean }) {
       {/* Mobile Drawer Overlay */}
       {drawerOpen && (
         <div
-          className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-[110] bg-black/50 backdrop-blur-sm lg:hidden"
           onClick={() => setDrawerOpen(false)}
           aria-hidden="true"
         />
@@ -142,7 +157,7 @@ export default function Navbar({ isSubpage = false }: { isSubpage?: boolean }) {
 
       {/* Mobile Drawer */}
       <aside
-        className={`fixed top-0 right-0 h-full w-[300px] z-50 bg-[var(--support)] flex flex-col transition-transform duration-300 ease-out lg:hidden ${drawerOpen ? "translate-x-0" : "translate-x-full"
+        className={`fixed top-0 right-0 h-full w-[300px] z-[120] bg-[var(--support)] flex flex-col transition-transform duration-300 ease-out lg:hidden ${drawerOpen ? "translate-x-0" : "translate-x-full"
           }`}
         aria-label="Mobile navigation menu"
         role="dialog"
@@ -188,7 +203,7 @@ export default function Navbar({ isSubpage = false }: { isSubpage?: boolean }) {
           </Button>
           <Button
             variant="filled"
-            href="https://wa.me/6281234567890?text=Halo%20REACreative%2C%20saya%20ingin%20konsultasi%20gratis"
+            href={`https://wa.me/${waNumber}?text=Halo%20REACreative%2C%20saya%20ingin%20konsultasi%20gratis`}
             className="w-full justify-center"
             id="drawer-konsultasi-gratis"
             target="_blank"

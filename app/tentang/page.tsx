@@ -73,7 +73,19 @@ export default async function TentangPage() {
   return (
     <SubpageLayout>
       {/* ── Page Header ── */}
-      <section className="pt-28 pb-16 bg-gradient-to-b from-[#fff5f5] to-white border-b border-[var(--border-light)]">
+      <section className="relative pt-28 pb-16 bg-gradient-to-b from-[#fff5f5] to-white border-b border-[var(--border-light)] overflow-hidden">
+          <div
+            className="hidden lg:block absolute bg-brand rounded-sm"
+            style={{
+              width: "50%",
+              height: "170%",
+              top: "-40%",
+              left: "60%",
+              transform: "rotate(-20deg)",
+              zIndex: 2,
+            }}
+            aria-hidden="true"
+          />
         <div className="max-w-[1400px] mx-auto px-6 lg:px-16">
           <p className="text-xs font-bold tracking-[3px] uppercase text-brand mb-3">
             Profil Perusahaan
@@ -153,14 +165,14 @@ export default async function TentangPage() {
               </p>
 
               {/* Stats row (mobile / non-xl) */}
-              <div className="grid grid-cols-3 gap-4 xl:hidden mb-8">
+              <div className="grid grid-cols-3 gap-2 sm:gap-4 xl:hidden mb-8">
                 {stats.map((s) => (
                   <div
                     key={s.label}
-                    className="border border-[var(--border-light)] rounded-xl p-4 text-center hover:border-brand/40 hover:shadow-sm transition-all"
+                    className="border border-[var(--border-light)] rounded-xl p-3 sm:p-4 text-center hover:border-brand/40 hover:shadow-sm transition-all"
                   >
-                    <p className="text-2xl font-black text-brand leading-none">{s.val}</p>
-                    <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)] mt-1">{s.label}</p>
+                    <p className="text-xl sm:text-2xl font-black text-brand leading-none">{s.val}</p>
+                    <p className="text-[9px] sm:text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)] mt-1">{s.label}</p>
                   </div>
                 ))}
               </div>
@@ -275,10 +287,9 @@ export default async function TentangPage() {
             fill
             className="object-cover object-center"
             sizes="100vw"
-            quality={95}
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[var(--support)] via-[var(--support)]/70 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#121115] via-[#121115]/85 to-transparent" />
           <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-16 w-full py-16">
             <p className="text-brand text-xs font-bold tracking-[3px] uppercase mb-3">Tim Kami</p>
             <h2 className="text-3xl lg:text-5xl font-black text-white leading-tight mb-6 max-w-xl">

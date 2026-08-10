@@ -1,3 +1,6 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import * as Icons from "lucide-react";
 import Image from "next/image";
 import { Service } from "@/lib/data";
@@ -23,6 +26,7 @@ const defaultServices = [
     icon_name: "Globe",
     show_on_homepage: true,
     sort_order: 1,
+    is_active: true,
   },
   {
     id: "2",
@@ -40,6 +44,7 @@ const defaultServices = [
     icon_name: "Smartphone",
     show_on_homepage: true,
     sort_order: 2,
+    is_active: true,
   },
   {
     id: "3",
@@ -57,10 +62,29 @@ const defaultServices = [
     icon_name: "Monitor",
     show_on_homepage: true,
     sort_order: 3,
+    is_active: true,
   },
 ];
 
 export default function ServiceCards({ initialServices = defaultServices }: ServiceCardsProps) {
+  const [services, setServices] = useState<Service[]>(initialServices);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("rea_services");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // Filter homepage-only services to match layout
+          setServices(parsed.filter((s: Service) => s.show_on_homepage));
+        }
+      } catch (e) {
+        console.error("Failed to parse services from localStorage", e);
+      }
+    } else {
+      localStorage.setItem("rea_services", JSON.stringify(initialServices));
+    }
+  }, []);
   return (
     <section
       id="layanan"
@@ -81,7 +105,7 @@ export default function ServiceCards({ initialServices = defaultServices }: Serv
             </span>
             <h2
               id="layanan-heading"
-              className="text-display-lg font-bold text-white leading-tight font-black"
+              className="text-display-lg text-white leading-tight font-black"
             >
               Kami Mengubah Ide Menjadi <span className="text-[#e11d2e]">Produk Digital</span>
             </h2>
@@ -136,7 +160,7 @@ export default function ServiceCards({ initialServices = defaultServices }: Serv
 
           {/* Right Column: Service Cards Grid */}
           <div className="lg:col-span-8 grid md:grid-cols-2 gap-6">
-            {initialServices.map((svc, idx) => {
+            {services.map((svc, idx) => {
               const IconComponent = (Icons as any)[svc.icon_name || "Globe"] || Icons.Globe;
 
               return (

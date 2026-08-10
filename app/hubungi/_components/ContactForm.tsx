@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { Send, CheckCircle, RefreshCw, AlertTriangle } from "lucide-react";
 
 export default function ContactForm() {
@@ -24,19 +23,23 @@ export default function ContactForm() {
     setSending(true);
     setStatus(null);
 
-    const supabase = createClient();
-
     try {
-      const { error } = await supabase
-        .from("contacts")
-        .insert({
-          name: name.trim(),
-          email: email.trim(),
-          phone: phone.trim() || null,
-          message: message.trim()
-        });
+      const newMessage = {
+        id: Math.random().toString(36).substring(2, 9),
+        name: name.trim(),
+        email: email.trim(),
+        phone: phone.trim() || null,
+        message: message.trim(),
+        created_at: new Date().toISOString()
+      };
 
-      if (error) throw error;
+      const existing = localStorage.getItem("rea_messages");
+      const messagesList = existing ? JSON.parse(existing) : [];
+      messagesList.unshift(newMessage);
+      localStorage.setItem("rea_messages", JSON.stringify(messagesList));
+
+      // Simulate a small delay for premium UX
+      await new Promise(resolve => setTimeout(resolve, 800));
 
       setSubmitted(true);
       setName("");

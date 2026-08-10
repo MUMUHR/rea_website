@@ -1,9 +1,16 @@
+import type { Metadata } from "next";
 import Navbar from "@/app/components/landing/Navbar";
 import Footer from "@/app/components/landing/Footer";
 import ContactForm from "@/app/hubungi/_components/ContactForm";
 import { Map } from "@/components/ui/map";
 import { getSiteSettings } from "@/lib/data";
 import { Phone, Mail, MapPin, Clock, Sparkles } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Hubungi Kami — REACreative.idn",
+  description:
+    "Hubungi REACreative (reacreative.idn) untuk konsultasi gratis pembuatan website, e-commerce, sistem kasir, atau aplikasi mobile bisnis Anda. Respon cepat 1x24 jam.",
+};
 
 export const dynamic = "force-dynamic";
 

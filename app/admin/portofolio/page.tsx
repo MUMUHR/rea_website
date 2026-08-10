@@ -1,29 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 import {
   Plus, Pencil, Trash2, Globe, Star, StarOff,
   ToggleLeft, ToggleRight, LayoutGrid, List, ExternalLink,
   Image as ImageIcon, Calendar, Tag, Layers, Search, X
 } from "lucide-react";
-
-type PortfolioItem = {
-  id: string;
-  title: string;
-  category: string;
-  category_color: string;
-  image_url: string;
-  project_url?: string;
-  description?: string;
-  year?: string;
-  tech_stack?: string;
-  status?: string;
-  is_featured: boolean;
-  show_on_homepage: boolean;
-  sort_order: number;
-  is_active: boolean;
-};
+import { DEFAULT_PORTFOLIO, PortfolioItem } from "@/lib/data";
 
 const emptyItem: Omit<PortfolioItem, "id"> = {
   title: "",
@@ -294,12 +277,19 @@ export default function PortofolioAdminPage() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [search, setSearch] = useState("");
 
-  const supabase = createClient();
-
-  const fetchData = async () => {
+  const fetchData = () => {
     setLoading(true);
-    const { data } = await supabase.from("portfolio_items").select("*").order("sort_order");
-    setItems(data ?? []);
+    const saved = localStorage.getItem("rea_portfolio");
+    if (saved) {
+      try {
+        setItems(JSON.parse(saved));
+      } catch (e) {
+        console.error(e);
+      }
+    } else {
+      setItems(DEFAULT_PORTFOLIO);
+      localStorage.setItem("rea_portfolio", JSON.stringify(DEFAULT_PORTFOLIO));
+    }
     setLoading(false);
   };
 
@@ -317,31 +307,44 @@ export default function PortofolioAdminPage() {
   const save = async () => {
     setSaving(true);
     setMsg("");
-    let error;
-    if (editing) {
-      ({ error } = await supabase.from("portfolio_items").update(form).eq("id", editing.id));
-    } else {
-      ({ error } = await supabase.from("portfolio_items").insert(form));
-    }
-    if (error) {
-      setMsg(`Error: ${error.message}`);
-    } else {
+    try {
+      let updatedList: PortfolioItem[];
+      if (editing) {
+        updatedList = items.map(item => item.id === editing.id ? { ...item, ...form } : item);
+      } else {
+        const newItem: PortfolioItem = {
+          ...form,
+          id: Math.random().toString(36).substring(2, 9)
+        };
+        updatedList = [...items, newItem];
+      }
+
+      localStorage.setItem("rea_portfolio", JSON.stringify(updatedList));
+
+      // Simulate a small delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+
       setMsg(editing ? "✓ Disimpan" : "✓ Ditambahkan");
       setShowModal(false);
       fetchData();
+    } catch (err: any) {
+      setMsg(`Error: ${err.message}`);
+    } finally {
+      setSaving(false);
+      setTimeout(() => setMsg(""), 3000);
     }
-    setSaving(false);
-    setTimeout(() => setMsg(""), 3000);
   };
 
   const remove = async (id: string) => {
     if (!confirm("Hapus proyek ini?")) return;
-    await supabase.from("portfolio_items").delete().eq("id", id);
+    const updatedList = items.filter(item => item.id !== id);
+    localStorage.setItem("rea_portfolio", JSON.stringify(updatedList));
     fetchData();
   };
 
   const toggle = async (id: string, field: "is_active" | "is_featured" | "show_on_homepage", val: boolean) => {
-    await supabase.from("portfolio_items").update({ [field]: !val }).eq("id", id);
+    const updatedList = items.map(item => item.id === id ? { ...item, [field]: !val } : item);
+    localStorage.setItem("rea_portfolio", JSON.stringify(updatedList));
     fetchData();
   };
 

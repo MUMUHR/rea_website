@@ -1,3 +1,6 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { PortfolioItem } from "@/lib/data";
@@ -14,7 +17,9 @@ const defaultPortfolio = [
     image_url: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=800&auto=format&fit=crop",
     project_url: "#",
     is_featured: true,
+    show_on_homepage: true,
     sort_order: 1,
+    is_active: true,
   },
   {
     id: "porto-2",
@@ -23,7 +28,9 @@ const defaultPortfolio = [
     image_url: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop",
     project_url: "#",
     is_featured: false,
+    show_on_homepage: true,
     sort_order: 2,
+    is_active: true,
   },
   {
     id: "porto-3",
@@ -32,14 +39,34 @@ const defaultPortfolio = [
     image_url: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop",
     project_url: "#",
     is_featured: false,
+    show_on_homepage: true,
     sort_order: 3,
+    is_active: true,
   },
 ];
 
 export default function PortfolioSection({ initialPortfolio = defaultPortfolio }: PortfolioSectionProps) {
+  const [portfolio, setPortfolio] = useState<PortfolioItem[]>(initialPortfolio);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("rea_portfolio");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setPortfolio(parsed.filter((p: PortfolioItem) => p.is_featured));
+        }
+      } catch (e) {
+        console.error("Failed to parse portfolio from localStorage", e);
+      }
+    } else {
+      localStorage.setItem("rea_portfolio", JSON.stringify(initialPortfolio));
+    }
+  }, []);
+
   // Use first item as large, next 2 as small to fit the layout perfectly
-  const largeItem = initialPortfolio[0];
-  const smallItems = initialPortfolio.slice(1, 3);
+  const largeItem = portfolio[0] || initialPortfolio[0];
+  const smallItems = portfolio.length > 1 ? portfolio.slice(1, 3) : initialPortfolio.slice(1, 3);
 
   return (
     <section
@@ -87,16 +114,21 @@ export default function PortfolioSection({ initialPortfolio = defaultPortfolio }
                 src={largeItem.image_url}
                 alt={`Screenshot project ${largeItem.title} — ${largeItem.category} oleh REACreative.idn`}
                 fill
+                priority
                 className="object-cover rounded-lg"
                 sizes="(max-width: 768px) 100vw, 60vw"
               />
               {/* Gradient overlay for text readability */}
-              <div className="absolute inset-0 rounded-lg bg-gradient-to-t from-[var(--support)]/80 via-transparent to-transparent" aria-hidden="true" />
+              <div className="absolute inset-0 rounded-lg bg-gradient-to-t from-black/85 via-black/30 to-transparent" aria-hidden="true" />
               {/* Label */}
               <div className="absolute bottom-5 left-5 right-5">
-                <p className="text-xs font-semibold uppercase tracking-widest text-brand mb-1">
+                <span
+                  className={`inline-block ${
+                    largeItem.category_color || "bg-brand"
+                  } text-white text-[10px] font-bold tracking-widest uppercase px-2.5 py-1 rounded-[4px] mb-2`}
+                >
                   {largeItem.category}
-                </p>
+                </span>
                 <h3 className="text-lg font-bold text-white">{largeItem.title}</h3>
               </div>
               {/* Arrow icon on hover */}
@@ -121,11 +153,15 @@ export default function PortfolioSection({ initialPortfolio = defaultPortfolio }
                     className="object-cover rounded-lg"
                     sizes="(max-width: 768px) 100vw, 40vw"
                   />
-                  <div className="absolute inset-0 rounded-lg bg-gradient-to-t from-[var(--support)]/80 via-transparent to-transparent" aria-hidden="true" />
+                  <div className="absolute inset-0 rounded-lg bg-gradient-to-t from-black/85 via-black/30 to-transparent" aria-hidden="true" />
                   <div className="absolute bottom-4 left-4 right-4">
-                    <p className="text-[10px] font-semibold uppercase tracking-widest text-brand mb-0.5">
+                    <span
+                      className={`inline-block ${
+                        item.category_color || "bg-brand"
+                      } text-white text-[9px] font-bold tracking-widest uppercase px-2 py-0.5 rounded-[4px] mb-1.5`}
+                    >
                       {item.category}
-                    </p>
+                    </span>
                     <h3 className="text-sm font-bold text-white">{item.title}</h3>
                   </div>
                   <div className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
