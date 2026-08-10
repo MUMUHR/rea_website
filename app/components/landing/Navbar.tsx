@@ -149,7 +149,7 @@ export default function Navbar({ isSubpage = false }: { isSubpage?: boolean }) {
       {/* Mobile Drawer Overlay */}
       {drawerOpen && (
         <div
-          className="fixed inset-0 z-[110] bg-black/50 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-[110] bg-black/60 backdrop-blur-md lg:hidden"
           onClick={() => setDrawerOpen(false)}
           aria-hidden="true"
         />
@@ -157,34 +157,39 @@ export default function Navbar({ isSubpage = false }: { isSubpage?: boolean }) {
 
       {/* Mobile Drawer */}
       <aside
-        className={`fixed top-0 right-0 h-full w-[300px] z-[120] bg-[var(--support)] flex flex-col transition-transform duration-300 ease-out lg:hidden ${drawerOpen ? "translate-x-0" : "translate-x-full"
-          }`}
+        className={`fixed inset-y-0 right-0 w-full sm:max-w-md h-full z-[120] bg-[var(--support)] flex flex-col transition-menu lg:hidden ${
+          drawerOpen ? "translate-x-0 drawer-open" : "translate-x-full"
+        }`}
         aria-label="Mobile navigation menu"
         role="dialog"
         aria-modal="true"
       >
         {/* Drawer Header */}
-        <div className="flex items-center justify-between px-6 h-16 border-b border-[var(--border-dark)]">
-          <span className="text-lg font-bold text-white">
+        <div className="flex items-center justify-between px-6 h-16 border-b border-white/5">
+          <span className="text-lg font-bold text-white tracking-tight">
             REA<span className="text-brand">CREATIVE</span>
+            <span className="text-white/40 font-normal">.idn</span>
           </span>
           <button
             onClick={() => setDrawerOpen(false)}
             className="p-2 rounded-md text-white/70 hover:text-white hover:bg-white/10 transition-colors"
             aria-label="Tutup menu"
           >
-            <X size={20} />
+            <X size={22} />
           </button>
         </div>
 
         {/* Drawer Links */}
-        <nav className="flex flex-col px-6 py-8 gap-1 flex-1" aria-label="Mobile navigation">
-          {navLinks.map((link) => (
+        <nav className="flex flex-col items-center justify-center gap-7 flex-1 px-6 py-8" aria-label="Mobile navigation">
+          {navLinks.map((link, idx) => (
             <Link
               key={link.label}
               href={link.href}
               onClick={() => setDrawerOpen(false)}
-              className="text-white/80 hover:text-white hover:bg-white/10 px-4 py-3 rounded-md font-medium transition-colors duration-200"
+              className="text-2xl font-black tracking-tight text-white/80 hover:text-white hover:scale-105 active:scale-95 transition-all duration-200 menu-item-anim"
+              style={{
+                transitionDelay: drawerOpen ? `${120 + idx * 45}ms` : "0ms"
+              }}
             >
               {link.label}
             </Link>
@@ -192,11 +197,16 @@ export default function Navbar({ isSubpage = false }: { isSubpage?: boolean }) {
         </nav>
 
         {/* Drawer CTA */}
-        <div className="px-6 pb-8 flex flex-col gap-3">
+        <div 
+          className="px-6 pb-12 pt-6 flex flex-col gap-4 border-t border-white/5 bg-black/20 backdrop-blur-sm menu-item-anim"
+          style={{
+            transitionDelay: drawerOpen ? `${120 + navLinks.length * 45}ms` : "0ms"
+          }}
+        >
           <Button
             variant="ghost-dark"
             href="/qr-generator"
-            className="w-full justify-center"
+            className="w-full justify-center py-3.5"
             id="drawer-qr-generator"
           >
             QR Generator
@@ -204,7 +214,7 @@ export default function Navbar({ isSubpage = false }: { isSubpage?: boolean }) {
           <Button
             variant="filled"
             href={`https://wa.me/${waNumber}?text=Halo%20REACreative%2C%20saya%20ingin%20konsultasi%20gratis`}
-            className="w-full justify-center"
+            className="w-full justify-center py-3.5"
             id="drawer-konsultasi-gratis"
             target="_blank"
             rel="noopener noreferrer"

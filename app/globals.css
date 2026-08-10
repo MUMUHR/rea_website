@@ -372,3 +372,23 @@
   -ms-overflow-style: none !important;  /* IE and Edge */
   scrollbar-width: none !important;  /* Firefox */
 }
+
+/* Custom premium transition for fullscreen mobile menu */
+.transition-menu {
+  transition-property: transform, opacity;
+  transition-duration: 500ms;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Staggered slide-in from right menu items */
+.menu-item-anim {
+  opacity: 0;
+  transform: translateX(45px);
+  transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1), opacity 600ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+
+.drawer-open .menu-item-anim {
+  opacity: 1;
+  transform: translateX(0);
+}
