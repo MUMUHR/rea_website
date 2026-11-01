@@ -6,7 +6,6 @@ import { DEFAULT_TESTIMONIALS, Testimonial } from "@/lib/data";
 
 const empty: Omit<Testimonial, "id"> = {
   author_name: "",
-  role: "",
   company: "",
   message: "",
   rating: 5,
@@ -180,9 +179,9 @@ export default function TestimonialAdminPage() {
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-baseline gap-1.5">
                     <h3 className="text-sm font-bold text-gray-800 truncate leading-snug">{t.author_name}</h3>
-                    {(t.role || t.company) && (
+                    {(t.company) && (
                       <span className="text-[10px] text-gray-400 truncate">
-                        — {t.role && t.company ? `${t.role} di ${t.company}` : t.role || t.company}
+                        — {t.company}
                       </span>
                     )}
                   </div>
@@ -266,13 +265,12 @@ export default function TestimonialAdminPage() {
                 <AvatarPreview url={form.avatar_url} name={form.author_name || "Preview"} />
                 <div>
                   <p className="text-xs font-bold text-gray-800">{form.author_name || "Nama Pengarang"}</p>
-                  <p className="text-[10px] text-gray-400">{form.role || "Jabatan"} {form.company ? `@ ${form.company}` : ""}</p>
+                  <p className="text-[10px] text-gray-400">{form.company ? `@ ${form.company}` : ""}</p>
                 </div>
               </div>
 
               {[
                 { key: "author_name", label: "Nama Pengarang", required: true, placeholder: "Contoh: John Doe" },
-                { key: "role", label: "Jabatan / Jabatan Kerja", placeholder: "Contoh: CEO, Manager, Marketing..." },
                 { key: "company", label: "Perusahaan / Brand", placeholder: "Contoh: PT. Sumber Sukses" },
                 { key: "avatar_url", label: "URL Foto Profil / Avatar (opsional)", placeholder: "https://... atau /img/avatar.png" },
                 { key: "sort_order", label: "Urutan Tampil", type: "number", placeholder: "0" },

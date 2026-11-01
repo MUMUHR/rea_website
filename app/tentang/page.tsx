@@ -300,11 +300,11 @@ export default async function TentangPage() {
               yang berpengalaman di berbagai domain industri.
             </p>
             <Link
-              href="/portofolio"
+              href="/hubungi"
               className="inline-flex items-center gap-2 bg-brand text-white font-semibold px-6 py-3.5 rounded-lg
                 hover:bg-[#c41526] transition-colors duration-200 shadow-[0_8px_24px_rgba(225,29,46,0.35)]"
             >
-              Lihat Portofolio
+              Hubungi Kami
               <ArrowRight size={16} />
             </Link>
           </div>

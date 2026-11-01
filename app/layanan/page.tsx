@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import * as Icons from "lucide-react";
 import SubpageLayout from "@/app/components/landing/SubpageLayout";
 import { getAllServices, getSiteSettings } from "@/lib/data";
@@ -184,14 +183,6 @@ export default async function LayananPage() {
               <Icons.MessageCircle size={18} />
               Konsultasi via WhatsApp
             </a>
-            <Link
-              href="/portofolio"
-              className="inline-flex items-center gap-2 text-white/70 font-medium text-sm border border-white/20 px-6 py-3.5 rounded-lg
-                hover:text-white hover:border-white/40 transition-all duration-200"
-            >
-              Lihat Portofolio
-              <Icons.ArrowRight size={14} />
-            </Link>
           </div>
         </div>
       </section>

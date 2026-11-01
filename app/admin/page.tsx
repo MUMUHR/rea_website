@@ -4,28 +4,14 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import DashboardInvoices from "@/app/admin/_components/DashboardInvoices";
 import {
-  Briefcase,
-  Layers,
-  Users,
-  Star,
-  Eye,
-  TrendingUp,
-  MousePointerClick,
-  Clock,
-  ArrowRight,
   Search,
-  MessageSquare,
   Plus,
-  CheckCircle2,
   MoreVertical,
   Bell,
-  Sparkles,
 } from "lucide-react";
 import {
-  DEFAULT_PORTFOLIO,
   DEFAULT_SERVICES,
   DEFAULT_TESTIMONIALS,
-  PortfolioItem,
   Service,
   Testimonial
 } from "@/lib/data";
@@ -41,22 +27,12 @@ interface ContactMessage {
 
 export default function AdminDashboard() {
   const [mounted, setMounted] = useState(false);
-  const [portfolioData, setPortfolioData] = useState<PortfolioItem[]>([]);
   const [layananData, setLayananData] = useState<Service[]>([]);
   const [testimonialData, setTestimonialData] = useState<Testimonial[]>([]);
   const [recentContacts, setRecentContacts] = useState<ContactMessage[]>([]);
 
   useEffect(() => {
     setMounted(true);
-
-    // Hydrate data from localStorage
-    const savedPortfolio = localStorage.getItem("rea_portfolio");
-    if (savedPortfolio) {
-      try { setPortfolioData(JSON.parse(savedPortfolio)); } catch (e) { console.error(e); }
-    } else {
-      setPortfolioData(DEFAULT_PORTFOLIO);
-      localStorage.setItem("rea_portfolio", JSON.stringify(DEFAULT_PORTFOLIO));
-    }
 
     const savedServices = localStorage.getItem("rea_services");
     if (savedServices) {
@@ -102,11 +78,6 @@ export default function AdminDashboard() {
     }
   }, []);
 
-  const activePortfolios = portfolioData.length;
-  const activeLayanan = layananData.length;
-  const activeTestimonials = testimonialData.length;
-
-  const pctPortfolio = 100;
   const pctLayanan = 100;
   const pctTestimonials = 100;
 
@@ -151,34 +122,9 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Three Colorful Project Cards from the photo */}
-        <div className="grid sm:grid-cols-3 gap-5">
-          {/* Card 1: Purple (Portofolio) */}
-          <div className="bg-gradient-to-br from-[#7c3aed] to-[#6d28d9] text-white rounded-xl p-6 shadow-xl relative overflow-hidden flex flex-col justify-between h-48">
-            <div className="flex justify-between items-start">
-              <div className="flex -space-x-1.5 overflow-hidden">
-                <div className="w-6 h-6 rounded-full border border-[#7c3aed] bg-white/20 flex items-center justify-center text-[9px] font-bold">1</div>
-                <div className="w-6 h-6 rounded-full border border-[#7c3aed] bg-white/20 flex items-center justify-center text-[9px] font-bold">2</div>
-                <div className="w-6 h-6 rounded-full border border-[#7c3aed] bg-white/25 flex items-center justify-center text-[9px] font-bold">+3</div>
-              </div>
-              <button className="text-white/70 hover:text-white p-1 rounded-full"><MoreVertical size={16} /></button>
-            </div>
-            <div>
-              <h2 className="text-lg font-black tracking-tight leading-tight">Web Development</h2>
-              <p className="text-[10px] text-white/75 font-semibold mt-1">Portofolio & Proyek</p>
-            </div>
-            <div>
-              <div className="h-1.5 w-full bg-white/20 rounded-full overflow-hidden">
-                <div className="h-full bg-white rounded-full" style={{ width: `${pctPortfolio}%` }} />
-              </div>
-              <div className="flex justify-between items-center text-[10px] text-white/90 font-bold mt-2">
-                <span>{portfolioData.length} items</span>
-                <span>{pctPortfolio}% aktif</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Card 2: Mint Green (Layanan) */}
+        {/* Project Cards */}
+        <div className="grid sm:grid-cols-2 gap-5">
+          {/* Card 1: Mint Green (Layanan) */}
           <div className="bg-gradient-to-br from-[#0d9488] to-[#0f766e] text-white rounded-xl p-6 shadow-xl relative overflow-hidden flex flex-col justify-between h-48">
             <div className="flex justify-between items-start">
               <div className="flex -space-x-1.5 overflow-hidden">
@@ -189,7 +135,7 @@ export default function AdminDashboard() {
               <button className="text-white/70 hover:text-white p-1 rounded-full"><MoreVertical size={16} /></button>
             </div>
             <div>
-              <h2 className="text-lg font-black tracking-tight leading-tight">Mobile App Design</h2>
+              <h2 className="text-lg font-black tracking-tight leading-tight">Layanan Digital</h2>
               <p className="text-[10px] text-white/75 font-semibold mt-1">Layanan Utama</p>
             </div>
             <div>
@@ -203,7 +149,7 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          {/* Card 3: Coral/Orange (Testimonial) */}
+          {/* Card 2: Coral/Orange (Testimonial) */}
           <div className="bg-gradient-to-br from-[#f97316] to-[#ea580c] text-white rounded-xl p-6 shadow-xl relative overflow-hidden flex flex-col justify-between h-48">
             <div className="flex justify-between items-start">
               <div className="flex -space-x-1.5 overflow-hidden">

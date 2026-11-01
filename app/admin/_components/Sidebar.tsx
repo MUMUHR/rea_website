@@ -5,7 +5,6 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
-  Briefcase,
   Settings,
   Users,
   Star,
@@ -47,7 +46,6 @@ const navGroups: NavGroup[] = [
   {
     title: "Kelola Konten",
     items: [
-      { href: "/admin/portofolio", label: "Portofolio", icon: Briefcase },
       { href: "/admin/layanan", label: "Layanan", icon: Layers },
       { href: "/admin/klien", label: "Logo Klien", icon: Users },
       { href: "/admin/testimonial", label: "Testimonial", icon: Star },

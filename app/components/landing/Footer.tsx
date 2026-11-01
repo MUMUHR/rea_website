@@ -43,7 +43,6 @@ export default function Footer({ settings = {} }: FooterProps) {
     ],
     bisnis: [
       { label: "Tentang Kami", href: "/tentang" },
-      { label: "Portofolio", href: "/portofolio" },
       { label: "FAQ", href: "/#faq" },
       { label: "Hubungi Kami", href: `https://wa.me/${waNumber}` },
     ],

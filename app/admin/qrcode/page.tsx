@@ -68,10 +68,10 @@ export default function QRCodeDashboard() {
               </button>
               <button
                 type="button"
-                onClick={() => setText("https://reacreative.web.id/portofolio")}
+                onClick={() => setText("https://reacreative.web.id/layanan")}
                 className="px-2.5 py-1.5 bg-gray-50 border border-gray-150 hover:bg-gray-100 rounded-md text-[10px] font-bold text-gray-600 transition-colors"
               >
-                Portofolio Page
+                Layanan Page
               </button>
             </div>
           </div>

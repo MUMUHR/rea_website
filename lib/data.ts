@@ -31,27 +31,9 @@ export type Service = {
   is_active: boolean;
 };
 
-export type PortfolioItem = {
-  id: string;
-  title: string;
-  category: string;
-  category_color?: string;
-  image_url: string;
-  project_url?: string;
-  description?: string;
-  year?: string;
-  tech_stack?: string;
-  status?: string;
-  is_featured: boolean;
-  show_on_homepage: boolean;
-  sort_order: number;
-  is_active: boolean;
-};
-
 export type Testimonial = {
   id: string;
   author_name: string;
-  role?: string;
   company?: string;
   message: string;
   rating: number;
@@ -168,92 +150,11 @@ export const DEFAULT_SERVICES: Service[] = [
   }
 ];
 
-export const DEFAULT_PORTFOLIO: PortfolioItem[] = [
-  {
-    id: "port-1",
-    title: "Nangro.id — Portal Berita Digital",
-    category: "Portal Berita",
-    category_color: "bg-blue-600",
-    image_url: "/img/gambar_section_3.png",
-    project_url: "https://nangro.id",
-    description: "Pengembangan portal media digital di Aceh dengan fitur kategori dinamis, optimasi SEO instan, sistem manajemen iklan, dan penulisan ramah seluler.",
-    year: "2025",
-    tech_stack: "Laravel & MySQL",
-    status: "Aktif / Online",
-    is_featured: true,
-    show_on_homepage: true,
-    sort_order: 1,
-    is_active: true
-  },
-  {
-    id: "port-2",
-    title: "Pandawa Store — E-Commerce System",
-    category: "Toko Online",
-    category_color: "bg-orange-600",
-    image_url: "/img/gambar_2.png",
-    description: "Platform e-commerce custom yang dilengkapi sistem keranjang, monitoring stok produk real-time, integrasi pengiriman RajaOngkir, dan otomasi proses checkout.",
-    year: "2024",
-    tech_stack: "PHP Native, REST API",
-    status: "Aktif / Online",
-    is_featured: true,
-    show_on_homepage: true,
-    sort_order: 2,
-    is_active: true
-  },
-  {
-    id: "port-3",
-    title: "Website Profil PII Lhokseumawe",
-    category: "Company Profile",
-    category_color: "bg-violet-600",
-    image_url: "/img/gambar_hero_section.png",
-    description: "Website profil organisasi profesi Persatuan Insinyur Indonesia cabang Lhokseumawe. Menampilkan agenda, data keanggotaan insinyur, dan publikasi organisasi.",
-    year: "2025",
-    tech_stack: "Laravel & Bootstrap",
-    status: "Aktif / Online",
-    is_featured: true,
-    show_on_homepage: true,
-    sort_order: 3,
-    is_active: true
-  },
-  {
-    id: "port-4",
-    title: "SIAKAD Sekolah Tinggi Kesehatan",
-    category: "Sistem Akademik",
-    category_color: "bg-teal-600",
-    image_url: "/img/gambar_section_3.png",
-    description: "Sistem informasi akademik kampus untuk pendaftaran mahasiswa baru, pengisian KRS, administrasi nilai mahasiswa, serta pencetakan transkrip.",
-    year: "2025",
-    tech_stack: "Laravel, PostgreSQL",
-    status: "Aktif / Terpasang",
-    is_featured: false,
-    show_on_homepage: false,
-    sort_order: 4,
-    is_active: true
-  },
-  {
-    id: "port-5",
-    title: "Reacreative POS — Point of Sale",
-    category: "Sistem Kasir",
-    category_color: "bg-amber-600",
-    image_url: "/img/gambar_2.png",
-    description: "Sistem kasir multi-cabang yang mendukung print struk thermal bluetooth/USB, scanning barcode barang, pencatatan transaksi utang piutang, dan laporan laba-rugi.",
-    year: "2024",
-    tech_stack: "Tailwind, AlpineJS, Laravel",
-    status: "Aktif / Terpasang",
-    is_featured: false,
-    show_on_homepage: false,
-    sort_order: 5,
-    is_active: true
-  }
-];
-
 export const DEFAULT_TESTIMONIALS: Testimonial[] = [
-  { id: "t-1", author_name: "Budi Santoso", role: "Pemilik", company: "Pandawa Store", message: "Proses pembuatan sangat cepat dan hasilnya melebihi ekspektasi. Tim REACreative sangat responsif dan profesional dalam setiap tahap pengerjaan.", rating: 5, sort_order: 1, is_active: true },
-  { id: "t-2", author_name: "Ir. Ahmad Rizal", role: "Ketua", company: "PII Lhokseumawe", message: "Website profil kami tampak sangat profesional dan mudah dikelola. Support setelah launch juga sangat membantu tim kami yang tidak berlatar IT.", rating: 5, sort_order: 2, is_active: true },
-  { id: "t-3", author_name: "Dr. Siti Aisyah", role: "Direktur", company: "STIKes Aceh", message: "Sistem akademik yang dibangun REACreative benar-benar mengubah cara kami mengelola data mahasiswa. Sangat efisien dan mudah digunakan.", rating: 5, sort_order: 3, is_active: true },
-  { id: "t-4", author_name: "Hendra Wijaya", role: "CEO", company: "Vanguard Retail", message: "Sistem POS kasir dari REACreative membantu kami memantau penjualan harian toko retail kami secara real-time dari mana saja. Investasi terbaik kami!", rating: 5, sort_order: 4, is_active: true },
-  { id: "t-5", author_name: "Sarah Salsabila", role: "Pimpinan", company: "Nangro Media Group", message: "Sistem optimasi SEO otomatis dari portal Nangro.id yang dibuat REACreative meningkatkan traffic harian kami hingga 200% dalam waktu singkat.", rating: 5, sort_order: 5, is_active: true },
-  { id: "t-6", author_name: "Adi Putera", role: "Owner", company: "Kopi Nusantara", message: "Branding digital dan website profil yang dibuat REACreative benar-benar mewakili rasa premium dari produk kopi kami. Klien kami sangat menyukainya.", rating: 5, sort_order: 6, is_active: true }
+  { id: "t-1", author_name: "Airlangga Yumi", company: "Pandawa Group", message: "Membuat Aplikasi voucher. Tim REACreative sangat responsif dan profesional dalam setiap tahap pengerjaan.", rating: 5, sort_order: 1, is_active: true },
+  { id: "t-3", author_name: "Azhar", company: "Stikesmulhokseumawe", message: "Sistem akademik yang dibangun REACreative benar-benar mengubah cara kami mengelola data mahasiswa. Sangat efisien dan mudah digunakan.", rating: 5, sort_order: 3, is_active: true },
+  { id: "t-4", author_name: "Yumi Airlangga", company: "PT Dua Kelinci", message: "Membuat Aplikasi voucher, Investasi terbaik kami!", rating: 5, sort_order: 4, is_active: true },
+  { id: "t-5", author_name: "Hamba allah", company: "PLN", message: "Membuat Aplikasi monitoring kelayakan alat. Klien kami sangat menyukainya.", rating: 5, sort_order: 5, is_active: true }
 ];
 
 // ── Fetchers ───────────────────────────────────────────
@@ -272,14 +173,6 @@ export async function getServicesHomepage(): Promise<Service[]> {
 
 export async function getAllServices(): Promise<Service[]> {
   return DEFAULT_SERVICES;
-}
-
-export async function getPortfolioHomepage(): Promise<PortfolioItem[]> {
-  return DEFAULT_PORTFOLIO.filter(p => p.is_featured).slice(0, 3);
-}
-
-export async function getAllPortfolio(): Promise<PortfolioItem[]> {
-  return DEFAULT_PORTFOLIO;
 }
 
 export async function getTestimonials(): Promise<Testimonial[]> {

@@ -159,9 +159,9 @@ export default function TestimonialsSection({ initialTestimonials = [] }: Testim
                     <h4 className="text-sm font-bold text-white truncate leading-tight">
                       {t.author_name}
                     </h4>
-                    {(t.role || t.company) && (
+                    {(t.company) && (
                       <p className="text-[10px] text-gray-400 font-semibold truncate mt-0.5">
-                        {t.role} {t.company ? `@ ${t.company}` : ""}
+                        {t.company}
                       </p>
                     )}
                   </div>
